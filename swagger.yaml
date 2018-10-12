@@ -112,7 +112,7 @@ definitions:
         example: FOO123
       type:
         type: string
-        example: account-index
+        example: account-indexes
       attributes:
         properties:
           accountIndexCode:

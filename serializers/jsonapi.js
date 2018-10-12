@@ -9,7 +9,7 @@ const { selfLink } = appRoot.require('/serializers/uri-builder');
 const { paginate } = appRoot.require('/serializers/paginator');
 
 const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
-const apiResourceProp = swagger.definitions.ApiResource.properties;
+const apiResourceProp = swagger.definitions.AccountIndexResourceObject.properties;
 const apiResourceType = apiResourceProp.type.example;
 const apiResourceKeys = _.keys(apiResourceProp.attributes.properties);
 
@@ -25,9 +25,10 @@ _.forEach(apiResourceKeys, (key, index) => {
 
 const serializerOptions = {
   attributes: apiResourceKeys,
-  id: 'ID',
+  id: 'ACCOUNT_INDEX_CODE',
   keyForAttribute: 'camelCase',
-  dataLinks: { self: row => selfLink(row.ID) },
+  dataLinks: { self: row => selfLink(row.ACCOUNT_INDEX_CODE) },
+  topLevelLinks: { self: row => selfLink(row.ACCOUNT_INDEX_CODE) },
 };
 
 /**

@@ -51,7 +51,7 @@ adminAppRouter.get('/', async (req, res) => {
     const now = moment();
     const info = {
       meta: {
-        name: 'express-api-skeleton',
+        name: 'financial-index-api',
         time: now.format('YYYY-MM-DD HH:mm:ssZZ'),
         unixTime: now.unix(),
         commit: commit.trim(),
@@ -65,7 +65,7 @@ adminAppRouter.get('/', async (req, res) => {
 });
 
 /**
- * @summary Get APIs
+ * @summary Get account indexes
  */
 appRouter.get(`/${api}`, async (req, res) => {
   try {
@@ -97,10 +97,10 @@ appRouter.get(`/${api}`, async (req, res) => {
 /**
  * @summary Get API by unique ID
  */
-appRouter.get(`/${api}/:id`, async (req, res) => {
+appRouter.get(`/${api}/:accountIndexCode`, async (req, res) => {
   try {
-    const { id } = req.params;
-    const result = await db.getApiById(id);
+    const { accountIndexCode } = req.params;
+    const result = await db.getAccountIndexByID({ accountIndexCode });
     if (!result) {
       res.status(404).send(notFound('An API with the specified ID was not found.'));
     } else {

@@ -55,15 +55,18 @@ const getApis = () => new Promise(async (resolve, reject) => {
 });
 
 /**
- * @summary Return a specific API by unique ID
+ * @summary Return a specific account index code
  * @function
- * @param {string} id
- * @returns {Promise} Promise object represents a specific API
+ * @param {string} acountIndexCode
+ * @returns {Promise} Promise object represents a specific account index code
  */
-const getApiById = id => new Promise(async (resolve, reject) => {
+const getAccountIndexByID = params => new Promise(async (resolve, reject) => {
   const connection = await getConnection();
   try {
-    const { rows } = await connection.execute(contrib.getApiById(id), id);
+    const { rows } = await connection.execute(
+      contrib.getAccountIndexCodeQuery(params),
+      params,
+    );
     if (_.isEmpty(rows)) {
       /** Should return 404 if nothing found */
       resolve(undefined);
@@ -82,4 +85,4 @@ const getApiById = id => new Promise(async (resolve, reject) => {
   }
 });
 
-module.exports = { getApis, getApiById };
+module.exports = { getApis, getAccountIndexByID };
