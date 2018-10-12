@@ -21,7 +21,7 @@ const {
   certPath,
   secureProtocol,
 } = config.get('server');
-const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
+const { basePath, info: { title } } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
 /**
  * @summary Initialize Express applications and routers
@@ -51,7 +51,7 @@ adminAppRouter.get('/', async (req, res) => {
     const now = moment();
     const info = {
       meta: {
-        name: 'financial-index-api',
+        name: title,
         time: now.format('YYYY-MM-DD HH:mm:ssZZ'),
         unixTime: now.unix(),
         commit: commit.trim(),
@@ -69,28 +69,26 @@ adminAppRouter.get('/', async (req, res) => {
  */
 appRouter.get(`/${api}`, async (req, res) => {
   try {
-    const MAX_PAGE_SIZE = 500;
-    const { page } = req.query;
-    /**
-     * Return 400 errors if page[size]/page[number] are not valid
-     */
-    if (page) {
-      const { size, number } = page;
-      const isInvalidSize = (size !== '') && (size <= 0 || size > MAX_PAGE_SIZE);
-      const isInvalidNumber = (number !== '') && number <= 0;
-      const errors = [];
-
-      if (isInvalidSize || isInvalidNumber) {
-        if (isInvalidSize) errors.push(`page[size] should an integer between 1 to ${MAX_PAGE_SIZE}.`);
-        if (isInvalidNumber) errors.push('page[number] should an integer starts at 1.');
-        return res.status(400).send(badRequest(errors));
+    const { q, organizationCode } = req.query;
+    if (!q && !organizationCode) {
+      res.status(400).send(badRequest(['At least one parameter is required.']));
+    } else {
+      // If there's additional parameters in the query object, oracle will complain
+      // because it doesn't recognize them. Thus, we only add the ones we need,
+      // and the ones that are defined.
+      // TODO: There's got to be a less ugly way to do this.
+      const params = {};
+      if (q) {
+        params.q = q;
       }
+      if (organizationCode) {
+        params.organizationCode = organizationCode;
+      }
+      const result = await db.getAccountIndexes(params);
+      res.send(result);
     }
-
-    const result = await db.getApis(req.query);
-    return res.send(result);
   } catch (err) {
-    return errorHandler(res, err);
+    errorHandler(res, err);
   }
 });
 
@@ -102,7 +100,7 @@ appRouter.get(`/${api}/:accountIndexCode`, async (req, res) => {
     const { accountIndexCode } = req.params;
     const result = await db.getAccountIndexByID({ accountIndexCode });
     if (!result) {
-      res.status(404).send(notFound('An API with the specified ID was not found.'));
+      res.status(404).send(notFound('The account index code was not found.'));
     } else {
       res.send(result);
     }

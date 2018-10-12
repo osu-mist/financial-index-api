@@ -29,12 +29,12 @@ paths:
       operationId: getAccountIndexes
       parameters:
         - in: query
-          name: accountIndexCode
+          name: q
           required: false
           description: >
             Trailing wild card and case insensitive query for indexes.
-            Example: /account-indexes?accountIndexCode=foo could return
-            foo123 and foo789.
+            Example: /account-indexes?q=foo could return
+            FOO123 and FOO789.
           type: string
         - in: query
           name: organizationCode

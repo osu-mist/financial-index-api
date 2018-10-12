@@ -15,27 +15,23 @@ const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'u
  * @param {string} id
  * @returns A self link URL
  */
-const selfLink = id => url.format({
+const idSelfLink = id => url.format({
   protocol,
   hostname,
   pathname: `${basePath}/${api}/${id}`,
 });
 
 /**
- * @summary Paginated link builder
+ * @summary Top level query link builder
  * @function
- * @param {number} pageNumber Page number of results
- * @param {number} pageSize Number of results to return
- * @returns A paginated link URL
+ * @param {object} query
+ * @returns A url formatted with query parameters in the query object.
  */
-const paginatedLink = (pageNumber, pageSize) => url.format({
+const querySelfLink = query => url.format({
   protocol,
   hostname,
   pathname: `${basePath}/${api}`,
-  query: {
-    'page[number]': pageNumber,
-    'page[size]': pageSize,
-  },
+  query,
 });
 
-module.exports = { selfLink, paginatedLink };
+module.exports = { idSelfLink, querySelfLink };

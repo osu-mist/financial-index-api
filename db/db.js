@@ -4,13 +4,12 @@ const _ = require('lodash');
 const oracledb = require('oracledb');
 
 const contrib = reqlib('/contrib/contrib');
-const { apiResourceSerializer } = reqlib('/serializers/jsonapi');
+const { apiResourcesSerializer, apiResourceSerializer } = reqlib('/serializers/jsonapi');
 
 process.on('SIGINT', () => process.exit());
 
 oracledb.outFormat = oracledb.OBJECT;
 const dbConfig = config.get('database');
-const { endpointUri } = config.get('server');
 
 /**
  * @summary Increase 1 extra thread for every 5 pools but no more than 128
@@ -37,15 +36,18 @@ const getConnection = () => new Promise(async (resolve, reject) => {
 });
 
 /**
- * @summary Return a list of APIs
+ * @summary Return a list account indexes
  * @function
- * @returns {Promise} Promise object represents a list of APIs
+ * @returns {Promise} Promise object represents a list account indexes
  */
-const getApis = () => new Promise(async (resolve, reject) => {
+const getAccountIndexes = query => new Promise(async (resolve, reject) => {
   const connection = await getConnection();
   try {
-    const { rows } = await connection.execute(contrib.getApis());
-    const jsonapi = apiResourceSerializer(rows, endpointUri);
+    const { rows } = await connection.execute(
+      contrib.getAccountIndexCodeQuery(query),
+      query,
+    );
+    const jsonapi = apiResourcesSerializer(rows, query);
     resolve(jsonapi);
     connection.close();
   } catch (err) {
@@ -60,12 +62,12 @@ const getApis = () => new Promise(async (resolve, reject) => {
  * @param {string} acountIndexCode
  * @returns {Promise} Promise object represents a specific account index code
  */
-const getAccountIndexByID = params => new Promise(async (resolve, reject) => {
+const getAccountIndexByID = query => new Promise(async (resolve, reject) => {
   const connection = await getConnection();
   try {
     const { rows } = await connection.execute(
-      contrib.getAccountIndexCodeQuery(params),
-      params,
+      contrib.getAccountIndexCodeQuery(query),
+      query,
     );
     if (_.isEmpty(rows)) {
       /** Should return 404 if nothing found */
@@ -75,7 +77,7 @@ const getAccountIndexByID = params => new Promise(async (resolve, reject) => {
       reject(new Error('Expect a single object but got multiple results.'));
     } else {
       const [row] = rows;
-      const jsonapi = apiResourceSerializer(row, endpointUri);
+      const jsonapi = apiResourceSerializer(row);
       resolve(jsonapi);
     }
     connection.close();
@@ -85,4 +87,4 @@ const getAccountIndexByID = params => new Promise(async (resolve, reject) => {
   }
 });
 
-module.exports = { getApis, getAccountIndexByID };
+module.exports = { getAccountIndexes, getAccountIndexByID };

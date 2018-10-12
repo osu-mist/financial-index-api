@@ -5,8 +5,7 @@ const yaml = require('js-yaml');
 const _ = require('lodash');
 const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 
-const { selfLink } = appRoot.require('/serializers/uri-builder');
-const { paginate } = appRoot.require('/serializers/paginator');
+const { querySelfLink, idSelfLink } = appRoot.require('/serializers/uri-builder');
 
 const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 const apiResourceProp = swagger.definitions.AccountIndexResourceObject.properties;
@@ -27,8 +26,7 @@ const serializerOptions = {
   attributes: apiResourceKeys,
   id: 'ACCOUNT_INDEX_CODE',
   keyForAttribute: 'camelCase',
-  dataLinks: { self: row => selfLink(row.ACCOUNT_INDEX_CODE) },
-  topLevelLinks: { self: row => selfLink(row.ACCOUNT_INDEX_CODE) },
+  dataLinks: { self: row => idSelfLink(row.ACCOUNT_INDEX_CODE) },
 };
 
 /**
@@ -39,29 +37,7 @@ const serializerOptions = {
  * @returns {Object} Serialized apiResources object
  */
 const apiResourcesSerializer = (rows, query) => {
-  /**
-   * Add pagination links and meta information to options if pagination is enabled
-   */
-  const { page } = query;
-  if (page) {
-    const {
-      paginatedRows,
-      paginationLinks,
-      totalPages,
-      pageNumber,
-      pageSize,
-    } = paginate(rows, page);
-
-    serializerOptions.topLevelLinks = paginationLinks;
-    serializerOptions.meta = {
-      totalResults: rows.length,
-      totalPages,
-      currentPageNumber: pageNumber,
-      currentPageSize: pageSize,
-    };
-    rows = paginatedRows;
-  }
-
+  serializerOptions.topLevelLinks = { self: querySelfLink(query) };
   return new JSONAPISerializer(apiResourceType, serializerOptions).serialize(rows);
 };
 
@@ -72,9 +48,9 @@ const apiResourcesSerializer = (rows, query) => {
  * @param {string} endpointUri Endpoint URI for creating self link
  * @returns {Object} Serialized apiResource object
  */
-const apiResourceSerializer = row => new JSONAPISerializer(
-  apiResourceType,
-  serializerOptions,
-).serialize(row);
+const apiResourceSerializer = (row) => {
+  serializerOptions.topLevelLinks = { self: idSelfLink(row.ACCOUNT_INDEX_CODE) };
+  return new JSONAPISerializer(apiResourceType, serializerOptions).serialize(row);
+};
 
 module.exports = { apiResourcesSerializer, apiResourceSerializer };
