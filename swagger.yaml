@@ -29,11 +29,11 @@ paths:
       operationId: getAccountIndexes
       parameters:
         - in: query
-          name: q
+          name: accountIndexCode
           required: false
           description: >
             Trailing wild card and case insensitive query for indexes.
-            Example: /account-indexes?q=foo could return
+            Example: /account-indexes?accountIndexCode=foo could return
             FOO123 and FOO789.
           type: string
         - in: query
@@ -119,6 +119,9 @@ definitions:
             type: string
             description: Unique account index code.
             example: FOO123
+          accountIndexTitle:
+            type: string
+            description: Short description of account index.
           effectiveDate:
             type: string
             format: date
@@ -126,12 +129,49 @@ definitions:
               Date this account index record became effective.
               This date will never be in the future.
             example: "2017-12-31"
-          title:
+          terminationDate:
             type: string
-            description: Short description of index.
+            format: date
+            description: >
+              Date this account index record will be terminated.
+              This date will always either be in the future or null.
+            example: "2018-12-31"
+          fundCode:
+            type: string
+            description: Fund code associated with this account index.
+          fundTitle:
+            type: string
+            description: Short description of fund code associated with this account index.
           organizationCode:
             type: string
-            description: Code for organization/department that this index is associated with.
+            description: Organization code associated with this account index.
+          organizationTitle:
+            type: string
+            description: Short description of organization code associated with this account index.
+          accountCode:
+            type: string
+            description: Account code associated with this account index.
+          accountTitle:
+            type: string
+            description: Short description of account code associated with this account index.
+          programCode:
+            type: string
+            description: Program code associated with this account index.
+          programTitle:
+            type: string
+            description: Short description of program code associated with this account index.
+          activityCode:
+            type: string
+            description: Activiy code associated with this account index.
+          activityTitle:
+            type: string
+            description: Short description of activity code associated with this account index.
+          locationCode:
+            type: string
+            description: Location code associated with this account index.
+          locationTitle:
+            type: string
+            description: Short description of location code associated with this account index.
       links:
         $ref: '#/definitions/SelfLink'
   SelfLink:

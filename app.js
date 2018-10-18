@@ -69,8 +69,8 @@ adminAppRouter.get('/', async (req, res) => {
  */
 appRouter.get(`/${api}`, async (req, res) => {
   try {
-    const { q, organizationCode } = req.query;
-    if (!q && !organizationCode) {
+    const { accountIndexCode, organizationCode } = req.query;
+    if (!accountIndexCode && !organizationCode) {
       res.status(400).send(badRequest(['At least one parameter is required.']));
     } else {
       // If there's additional parameters in the query object, oracle will complain
@@ -78,8 +78,8 @@ appRouter.get(`/${api}`, async (req, res) => {
       // and the ones that are defined.
       // TODO: There's got to be a less ugly way to do this.
       const params = {};
-      if (q) {
-        params.q = q;
+      if (accountIndexCode) {
+        params.accountIndexCode = accountIndexCode;
       }
       if (organizationCode) {
         params.organizationCode = organizationCode;
@@ -95,10 +95,10 @@ appRouter.get(`/${api}`, async (req, res) => {
 /**
  * @summary Get API by unique ID
  */
-appRouter.get(`/${api}/:accountIndexCode`, async (req, res) => {
+appRouter.get(`/${api}/:accountIndexCodeID`, async (req, res) => {
   try {
-    const { accountIndexCode } = req.params;
-    const result = await db.getAccountIndexByID({ accountIndexCode });
+    const { accountIndexCodeID } = req.params;
+    const result = await db.getAccountIndexByID({ accountIndexCodeID });
     if (!result) {
       res.status(404).send(notFound('The account index code was not found.'));
     } else {
