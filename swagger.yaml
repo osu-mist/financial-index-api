@@ -20,7 +20,7 @@ externalDocs:
 produces:
   - application/json
 paths:
-  /account-indexes:
+  /finance/account-indexes:
     get:
       summary: Get account indexes.
       tags:
@@ -55,7 +55,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/Errors'
-  /account-indexes/{accountIndexCode}:
+  /finance/account-indexes/{accountIndexCode}:
     get:
       summary: Get a specific account index.
       tags:
@@ -76,6 +76,62 @@ paths:
             $ref: '#/definitions/AccountIndexResultObject'
         404:
           description: Account index not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+  /finance/activity-codes:
+    get:
+      summary: Get activity codes.
+      tags:
+        - activity-codes
+      description: Get a list of activity codes, query by activity code.
+      operationId: getActivityCodes
+      parameters:
+        - name: activityCode
+          in: query
+          description: >
+            Trailing wild card and case insensitive query for activity codes.
+            Example: /activity-codes?activityCode=a could return
+            ABC and AYZ.
+          type: string
+          required: true
+        - $ref: '#/parameters/authorization'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ActivityCodesResultObject'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+  /finance/activity-codes/{activityCode}:
+    get:
+      summary: Get a specific activity code.
+      tags:
+        - activity-codes
+      operationId: getActivityCodeByID
+      parameters:
+        - name: activityCode
+          in: path
+          description: Activity code.
+          type: string
+          required: true
+        - $ref: '#/parameters/authorization'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ActivityCodeResultObject'
+        404:
+          description: Activity code not found
           schema:
             $ref: '#/definitions/Errors'
         500:
@@ -107,18 +163,14 @@ definitions:
   AccountIndexResourceObject:
     properties:
       id:
-        type: string
-        description: Unique account index code.
-        example: FOO123
+        $ref: '#/definitions/AccountIndexCode'
       type:
         type: string
         example: account-indexes
       attributes:
         properties:
           accountIndexCode:
-            type: string
-            description: Unique account index code.
-            example: FOO123
+            $ref: '#/definitions/AccountIndexCode'
           accountIndexTitle:
             type: string
             description: Short description of account index.
@@ -174,6 +226,58 @@ definitions:
             description: Short description of location code associated with this account index.
       links:
         $ref: '#/definitions/SelfLink'
+  AccountIndexCode:
+    type: string
+    description: Unique account index code.
+    example: FOO123
+  ActivityCodesResultObject:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/ActivityCodeResourceObject'
+  ActivityCodeResultObject:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        $ref: '#/definitions/ActivityCodeResourceObject'
+  ActivityCodeResourceObject:
+    properties:
+      id:
+        $ref: '#/definitions/ActivityCode'
+      type:
+        type: string
+        example: account-indexes
+      attributes:
+        properties:
+          activityCode:
+            $ref: '#/definitions/ActivityCode'
+          activityTitle:
+            type: string
+            description: Short description of activity code.
+          effectiveDate:
+            type: string
+            format: date
+            description: >
+              Date this activity code record became effective.
+              This date will never be in the future.
+            example: "2017-12-31"
+          terminationDate:
+            type: string
+            format: date
+            description: >
+              Date this activity code record will be terminated.
+              This date will always either be in the future or null.
+            example: "2018-12-31"
+      links:
+        $ref: '#/definitions/SelfLink'
+  ActivityCode:
+    type: string
+    description: Unique activity code.
+    example: ABCD
   SelfLink:
     properties:
       self:

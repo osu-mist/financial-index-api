@@ -13,6 +13,8 @@ const { authentication } = appRoot.require('/middlewares/authentication');
 const { logger } = appRoot.require('/middlewares/logger');
 const api = appRoot.require('/package.json').name;
 
+const accountIndexEndpoint = `${api}/account-indexes`;
+
 const {
   port,
   adminPort,
@@ -67,7 +69,7 @@ adminAppRouter.get('/', async (req, res) => {
 /**
  * @summary Get account indexes
  */
-appRouter.get(`/${api}`, async (req, res) => {
+appRouter.get(`/${accountIndexEndpoint}`, async (req, res) => {
   try {
     const { accountIndexCode, organizationCode } = req.query;
     if (!accountIndexCode && !organizationCode) {
@@ -95,7 +97,7 @@ appRouter.get(`/${api}`, async (req, res) => {
 /**
  * @summary Get API by unique ID
  */
-appRouter.get(`/${api}/:accountIndexCodeID`, async (req, res) => {
+appRouter.get(`/${accountIndexEndpoint}/:accountIndexCodeID`, async (req, res) => {
   try {
     const { accountIndexCodeID } = req.params;
     const result = await db.getAccountIndexByID({ accountIndexCodeID });

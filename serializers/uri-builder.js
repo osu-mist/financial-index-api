@@ -4,8 +4,6 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const url = require('url');
 
-const api = appRoot.require('/package.json').name;
-
 const { protocol, hostname } = config.get('server');
 const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
@@ -15,10 +13,10 @@ const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'u
  * @param {string} id
  * @returns A self link URL
  */
-const idSelfLink = id => url.format({
+const idSelfLink = (endpoint, id) => url.format({
   protocol,
   hostname,
-  pathname: `${basePath}/${api}/${id}`,
+  pathname: `${basePath}/${endpoint}/${id}`,
 });
 
 /**
@@ -27,10 +25,10 @@ const idSelfLink = id => url.format({
  * @param {object} query
  * @returns A url formatted with query parameters in the query object.
  */
-const querySelfLink = query => url.format({
+const querySelfLink = (endpoint, query) => url.format({
   protocol,
   hostname,
-  pathname: `${basePath}/${api}`,
+  pathname: `${basePath}/${endpoint}`,
   query,
 });
 

@@ -11,6 +11,9 @@ const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8')
 const apiResourceProp = swagger.definitions.AccountIndexResourceObject.properties;
 const apiResourceType = apiResourceProp.type.example;
 const apiResourceKeys = _.keys(apiResourceProp.attributes.properties);
+const api = appRoot.require('/package.json').name;
+
+const accountIndexEndpoint = `${api}/account-indexes`;
 
 /**
  * The column name getting from database is usually UPPER_CASE.
@@ -22,11 +25,11 @@ _.forEach(apiResourceKeys, (key, index) => {
   apiResourceKeys[index] = decamelize(key).toUpperCase();
 });
 
-const serializerOptions = {
+const accountIndexSerializerOptions = {
   attributes: apiResourceKeys,
   id: 'ACCOUNT_INDEX_CODE',
   keyForAttribute: 'camelCase',
-  dataLinks: { self: row => idSelfLink(row.ACCOUNT_INDEX_CODE) },
+  dataLinks: { self: row => idSelfLink(accountIndexEndpoint, row.ACCOUNT_INDEX_CODE) },
 };
 
 /**
@@ -37,8 +40,10 @@ const serializerOptions = {
  * @returns {Object} Serialized apiResources object
  */
 const apiResourcesSerializer = (rows, query) => {
-  serializerOptions.topLevelLinks = { self: querySelfLink(query) };
-  return new JSONAPISerializer(apiResourceType, serializerOptions).serialize(rows);
+  accountIndexSerializerOptions.topLevelLinks = {
+    self: querySelfLink(accountIndexEndpoint, query),
+  };
+  return new JSONAPISerializer(apiResourceType, accountIndexSerializerOptions).serialize(rows);
 };
 
 /**
@@ -49,8 +54,10 @@ const apiResourcesSerializer = (rows, query) => {
  * @returns {Object} Serialized apiResource object
  */
 const apiResourceSerializer = (row) => {
-  serializerOptions.topLevelLinks = { self: idSelfLink(row.ACCOUNT_INDEX_CODE) };
-  return new JSONAPISerializer(apiResourceType, serializerOptions).serialize(row);
+  accountIndexSerializerOptions.topLevelLinks = {
+    self: idSelfLink(accountIndexEndpoint, row.ACCOUNT_INDEX_CODE),
+  };
+  return new JSONAPISerializer(apiResourceType, accountIndexSerializerOptions).serialize(row);
 };
 
 module.exports = { apiResourcesSerializer, apiResourceSerializer };

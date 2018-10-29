@@ -1,5 +1,5 @@
 {
-  "name": "account-indexes",
+  "name": "finance",
   "version": "1.0.0",
   "description": "API to get financial account index-codes.",
   "main": "app.js",
