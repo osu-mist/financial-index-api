@@ -55,9 +55,9 @@ const getAccountIndexes = query => new Promise(async (resolve, reject) => {
     );
     const jsonapi = accountIndexesSerializer(rows, query);
     resolve(jsonapi);
-    connection.close();
   } catch (err) {
     reject(err);
+  } finally {
     connection.close();
   }
 });
@@ -86,9 +86,9 @@ const getAccountIndexByID = query => new Promise(async (resolve, reject) => {
       const jsonapi = accountIndexSerializer(row);
       resolve(jsonapi);
     }
-    connection.close();
   } catch (err) {
     reject(err);
+  } finally {
     connection.close();
   }
 });
@@ -107,18 +107,18 @@ const getActivityCodes = query => new Promise(async (resolve, reject) => {
     );
     const jsonapi = activityCodesSerializer(rows, query);
     resolve(jsonapi);
-    connection.close();
   } catch (err) {
     reject(err);
+  } finally {
     connection.close();
   }
 });
 
 /**
- * @summary Return a specific account index code
+ * @summary Return a specific activity code
  * @function
  * @param {string} acountIndexCode
- * @returns {Promise} Promise object represents a specific account index code
+ * @returns {Promise} Promise object represents a specific activity code
  */
 const getActivityCodeByID = query => new Promise(async (resolve, reject) => {
   const connection = await getConnection();
@@ -138,9 +138,9 @@ const getActivityCodeByID = query => new Promise(async (resolve, reject) => {
       const jsonapi = activityCodeSerializer(row);
       resolve(jsonapi);
     }
-    connection.close();
   } catch (err) {
     reject(err);
+  } finally {
     connection.close();
   }
 });

@@ -9,17 +9,16 @@ const { querySelfLink, idSelfLink } = appRoot.require('/serializers/uri-builder'
 
 const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
+const api = appRoot.require('/package.json').name;
+
 const accountIndexProperties = swagger.definitions.AccountIndexResourceObject.properties;
 const accountIndexResourceType = accountIndexProperties.type.example;
 const accountIndexKeys = _.keys(accountIndexProperties.attributes.properties);
+const accountIndexEndpoint = `${api}/account-indexes`;
 
 const activityCodeProperties = swagger.definitions.ActivityCodeResourceObject.properties;
 const activityCodeResourceType = activityCodeProperties.type.example;
 const activityCodeKeys = _.keys(activityCodeProperties.attributes.properties);
-
-const api = appRoot.require('/package.json').name;
-
-const accountIndexEndpoint = `${api}/account-indexes`;
 const activityCodesEndpoint = `${api}/activity-codes`;
 
 /**
@@ -44,11 +43,11 @@ const accountIndexSerializerOptions = {
 };
 
 /**
- * @summary Serializer apiResources to JSON API
+ * @summary Serializer accountIndexes to JSON API
  * @function
  * @param {[Object]} rows Data rows from datasource
  * @param {Object} query Query parameters
- * @returns {Object} Serialized apiResources object
+ * @returns {Object} Serialized accountIndexes object
  */
 const accountIndexesSerializer = (rows, query) => {
   accountIndexSerializerOptions.topLevelLinks = {
@@ -59,11 +58,11 @@ const accountIndexesSerializer = (rows, query) => {
 };
 
 /**
- * @summary Serializer apiResource to JSON API
+ * @summary Serializer accountIndex to JSON API
  * @function
  * @param {Object} row Data row from datasource
  * @param {string} endpointUri Endpoint URI for creating self link
- * @returns {Object} Serialized apiResource object
+ * @returns {Object} Serialized accountIndex object
  */
 const accountIndexSerializer = (row) => {
   accountIndexSerializerOptions.topLevelLinks = {
@@ -81,7 +80,7 @@ const activityCodeSerializerOptions = {
 };
 
 /**
- * @summary Serializer activity codes to JSON API
+ * @summary Serializer activityCodes to JSON API
  * @function
  * @param {[Object]} rows Data rows from datasource
  * @param {Object} query Query parameters
@@ -96,11 +95,11 @@ const activityCodesSerializer = (rows, query) => {
 };
 
 /**
- * @summary Serializer apiResource to JSON API
+ * @summary Serializer activityCode to JSON API
  * @function
  * @param {Object} row Data row from datasource
  * @param {string} endpointUri Endpoint URI for creating self link
- * @returns {Object} Serialized apiResource object
+ * @returns {Object} Serialized activityCode object
  */
 const activityCodeSerializer = (row) => {
   activityCodeSerializerOptions.topLevelLinks = {
