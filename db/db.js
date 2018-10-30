@@ -4,7 +4,13 @@ const _ = require('lodash');
 const oracledb = require('oracledb');
 
 const contrib = reqlib('/contrib/contrib');
-const { apiResourcesSerializer, apiResourceSerializer } = reqlib('/serializers/jsonapi');
+
+const {
+  accountIndexesSerializer,
+  accountIndexSerializer,
+  activityCodesSerializer,
+  activityCodeSerializer,
+} = reqlib('/serializers/jsonapi');
 
 process.on('SIGINT', () => process.exit());
 
@@ -38,7 +44,7 @@ const getConnection = () => new Promise(async (resolve, reject) => {
 /**
  * @summary Return a list account indexes
  * @function
- * @returns {Promise} Promise object represents a list account indexes
+ * @returns {Promise} Promise object represents a list of account indexes
  */
 const getAccountIndexes = query => new Promise(async (resolve, reject) => {
   const connection = await getConnection();
@@ -47,7 +53,7 @@ const getAccountIndexes = query => new Promise(async (resolve, reject) => {
       contrib.getAccountIndexCodeQuery(query),
       query,
     );
-    const jsonapi = apiResourcesSerializer(rows, query);
+    const jsonapi = accountIndexesSerializer(rows, query);
     resolve(jsonapi);
     connection.close();
   } catch (err) {
@@ -77,7 +83,7 @@ const getAccountIndexByID = query => new Promise(async (resolve, reject) => {
       reject(new Error('Expect a single object but got multiple results.'));
     } else {
       const [row] = rows;
-      const jsonapi = apiResourceSerializer(row);
+      const jsonapi = accountIndexSerializer(row);
       resolve(jsonapi);
     }
     connection.close();
@@ -87,4 +93,61 @@ const getAccountIndexByID = query => new Promise(async (resolve, reject) => {
   }
 });
 
-module.exports = { getAccountIndexes, getAccountIndexByID };
+/**
+ * @summary Return a list activity codes
+ * @function
+ * @returns {Promise} Promise object represents a list of activity codes
+ */
+const getActivityCodes = query => new Promise(async (resolve, reject) => {
+  const connection = await getConnection();
+  try {
+    const { rows } = await connection.execute(
+      contrib.getActivityCodeQuery(query),
+      query,
+    );
+    const jsonapi = activityCodesSerializer(rows, query);
+    resolve(jsonapi);
+    connection.close();
+  } catch (err) {
+    reject(err);
+    connection.close();
+  }
+});
+
+/**
+ * @summary Return a specific account index code
+ * @function
+ * @param {string} acountIndexCode
+ * @returns {Promise} Promise object represents a specific account index code
+ */
+const getActivityCodeByID = query => new Promise(async (resolve, reject) => {
+  const connection = await getConnection();
+  try {
+    const { rows } = await connection.execute(
+      contrib.getActivityCodeQuery(query),
+      query,
+    );
+    if (_.isEmpty(rows)) {
+      /** Should return 404 if nothing found */
+      resolve(undefined);
+    } else if (rows.length > 1) {
+      /** Should return 500 if get multiple results */
+      reject(new Error('Expect a single object but got multiple results.'));
+    } else {
+      const [row] = rows;
+      const jsonapi = activityCodeSerializer(row);
+      resolve(jsonapi);
+    }
+    connection.close();
+  } catch (err) {
+    reject(err);
+    connection.close();
+  }
+});
+
+module.exports = {
+  getAccountIndexes,
+  getAccountIndexByID,
+  getActivityCodes,
+  getActivityCodeByID,
+};

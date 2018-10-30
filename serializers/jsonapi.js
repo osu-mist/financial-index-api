@@ -8,12 +8,19 @@ const JSONAPISerializer = require('jsonapi-serializer').Serializer;
 const { querySelfLink, idSelfLink } = appRoot.require('/serializers/uri-builder');
 
 const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
-const apiResourceProp = swagger.definitions.AccountIndexResourceObject.properties;
-const apiResourceType = apiResourceProp.type.example;
-const apiResourceKeys = _.keys(apiResourceProp.attributes.properties);
+
+const accountIndexProperties = swagger.definitions.AccountIndexResourceObject.properties;
+const accountIndexResourceType = accountIndexProperties.type.example;
+const accountIndexKeys = _.keys(accountIndexProperties.attributes.properties);
+
+const activityCodeProperties = swagger.definitions.ActivityCodeResourceObject.properties;
+const activityCodeResourceType = activityCodeProperties.type.example;
+const activityCodeKeys = _.keys(activityCodeProperties.attributes.properties);
+
 const api = appRoot.require('/package.json').name;
 
 const accountIndexEndpoint = `${api}/account-indexes`;
+const activityCodesEndpoint = `${api}/activity-codes`;
 
 /**
  * The column name getting from database is usually UPPER_CASE.
@@ -21,12 +28,16 @@ const accountIndexEndpoint = `${api}/account-indexes`;
  * UPPER_CASE so that the serializer can correctly match the corresponding columns
  * from the raw data rows.
  */
-_.forEach(apiResourceKeys, (key, index) => {
-  apiResourceKeys[index] = decamelize(key).toUpperCase();
+_.forEach(accountIndexKeys, (key, index) => {
+  accountIndexKeys[index] = decamelize(key).toUpperCase();
+});
+
+_.forEach(activityCodeKeys, (key, index) => {
+  activityCodeKeys[index] = decamelize(key).toUpperCase();
 });
 
 const accountIndexSerializerOptions = {
-  attributes: apiResourceKeys,
+  attributes: accountIndexKeys,
   id: 'ACCOUNT_INDEX_CODE',
   keyForAttribute: 'camelCase',
   dataLinks: { self: row => idSelfLink(accountIndexEndpoint, row.ACCOUNT_INDEX_CODE) },
@@ -39,11 +50,12 @@ const accountIndexSerializerOptions = {
  * @param {Object} query Query parameters
  * @returns {Object} Serialized apiResources object
  */
-const apiResourcesSerializer = (rows, query) => {
+const accountIndexesSerializer = (rows, query) => {
   accountIndexSerializerOptions.topLevelLinks = {
     self: querySelfLink(accountIndexEndpoint, query),
   };
-  return new JSONAPISerializer(apiResourceType, accountIndexSerializerOptions).serialize(rows);
+  return new JSONAPISerializer(accountIndexResourceType,
+    accountIndexSerializerOptions).serialize(rows);
 };
 
 /**
@@ -53,11 +65,54 @@ const apiResourcesSerializer = (rows, query) => {
  * @param {string} endpointUri Endpoint URI for creating self link
  * @returns {Object} Serialized apiResource object
  */
-const apiResourceSerializer = (row) => {
+const accountIndexSerializer = (row) => {
   accountIndexSerializerOptions.topLevelLinks = {
     self: idSelfLink(accountIndexEndpoint, row.ACCOUNT_INDEX_CODE),
   };
-  return new JSONAPISerializer(apiResourceType, accountIndexSerializerOptions).serialize(row);
+  return new JSONAPISerializer(accountIndexResourceType,
+    accountIndexSerializerOptions).serialize(row);
 };
 
-module.exports = { apiResourcesSerializer, apiResourceSerializer };
+const activityCodeSerializerOptions = {
+  attributes: activityCodeKeys,
+  id: 'ACTIVITY_CODE',
+  keyForAttribute: 'camelCase',
+  dataLinks: { self: row => idSelfLink(activityCodesEndpoint, row.ACTIVITY_CODE) },
+};
+
+/**
+ * @summary Serializer activity codes to JSON API
+ * @function
+ * @param {[Object]} rows Data rows from datasource
+ * @param {Object} query Query parameters
+ * @returns {Object} Serialized activityCodes object
+ */
+const activityCodesSerializer = (rows, query) => {
+  activityCodeSerializerOptions.topLevelLinks = {
+    self: querySelfLink(activityCodesEndpoint, query),
+  };
+  return new JSONAPISerializer(activityCodeResourceType,
+    activityCodeSerializerOptions).serialize(rows);
+};
+
+/**
+ * @summary Serializer apiResource to JSON API
+ * @function
+ * @param {Object} row Data row from datasource
+ * @param {string} endpointUri Endpoint URI for creating self link
+ * @returns {Object} Serialized apiResource object
+ */
+const activityCodeSerializer = (row) => {
+  activityCodeSerializerOptions.topLevelLinks = {
+    self: idSelfLink(activityCodesEndpoint, row.ACTIVITY_CODE),
+  };
+  return new JSONAPISerializer(activityCodeResourceType,
+    activityCodeSerializerOptions).serialize(row);
+};
+
+module.exports = {
+  accountIndexesSerializer,
+  accountIndexSerializer,
+  activityCodesSerializer,
+  activityCodeSerializer,
+};

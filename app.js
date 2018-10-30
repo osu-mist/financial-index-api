@@ -14,6 +14,7 @@ const { logger } = appRoot.require('/middlewares/logger');
 const api = appRoot.require('/package.json').name;
 
 const accountIndexEndpoint = `${api}/account-indexes`;
+const activityCodesEndpoint = `${api}/activity-codes`;
 
 const {
   port,
@@ -103,6 +104,41 @@ appRouter.get(`/${accountIndexEndpoint}/:accountIndexCodeID`, async (req, res) =
     const result = await db.getAccountIndexByID({ accountIndexCodeID });
     if (!result) {
       res.status(404).send(notFound('The account index code was not found.'));
+    } else {
+      res.send(result);
+    }
+  } catch (err) {
+    errorHandler(res, err);
+  }
+});
+
+/**
+ * @summary Get activity codes
+ */
+appRouter.get(`/${activityCodesEndpoint}`, async (req, res) => {
+  try {
+    const { activityCode } = req.query;
+    if (!activityCode) {
+      res.status(400).send(badRequest(['activityCode (query parameter) is required.']));
+    } else {
+      const params = { activityCode };
+      const result = await db.getActivityCodes(params);
+      res.send(result);
+    }
+  } catch (err) {
+    errorHandler(res, err);
+  }
+});
+
+/**
+ * @summary Get API by unique ID
+ */
+appRouter.get(`/${activityCodesEndpoint}/:activityCodeID`, async (req, res) => {
+  try {
+    const { activityCodeID } = req.params;
+    const result = await db.getActivityCodeByID({ activityCodeID });
+    if (!result) {
+      res.status(404).send(notFound('The activity code was not found.'));
     } else {
       res.send(result);
     }
