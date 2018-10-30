@@ -96,7 +96,7 @@ appRouter.get(`/${accountIndexEndpoint}`, async (req, res) => {
 });
 
 /**
- * @summary Get API by unique ID
+ * @summary Get a specific account index
  */
 appRouter.get(`/${accountIndexEndpoint}/:accountIndexCodeID`, async (req, res) => {
   try {
@@ -131,7 +131,7 @@ appRouter.get(`/${activityCodesEndpoint}`, async (req, res) => {
 });
 
 /**
- * @summary Get API by unique ID
+ * @summary Get a specific activity code
  */
 appRouter.get(`/${activityCodesEndpoint}/:activityCodeID`, async (req, res) => {
   try {
