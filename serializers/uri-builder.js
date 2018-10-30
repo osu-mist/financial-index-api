@@ -4,7 +4,17 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const url = require('url');
 
-const { protocol, hostname } = config.get('server');
+// Configuration file won't exist until deployment.
+// Use dummy values if we can't load the configuration file.
+function getConfigValues() {
+  try {
+    return config.get('server');
+  } catch (err) {
+    return { protocol: 'https', hostname: 'example.com' };
+  }
+}
+
+const { protocol, hostname } = getConfigValues();
 const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
 /**
