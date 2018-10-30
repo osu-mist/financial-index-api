@@ -1,8 +1,8 @@
 FROM node:8.11
 
 # Copy folder to workspace
-WORKDIR /usr/src/express-api-skeleton
-COPY . /usr/src/express-api-skeleton
+WORKDIR /usr/src/financial-index-api
+COPY . /usr/src/financial-index-api
 
 # Install dependent packages via yarn
 RUN yarn
