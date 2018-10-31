@@ -7,7 +7,7 @@ const url = require('url');
 // Configuration file won't exist until deployment.
 // Use dummy values if we can't load the configuration file.
 // TODO: Change this to a more scalable approach.
-const { protocol, hostname } = () => {
+const getConfigValues = () => {
   try {
     return config.get('server');
   } catch (err) {
@@ -15,6 +15,7 @@ const { protocol, hostname } = () => {
   }
 };
 
+const { protocol, hostname } = getConfigValues();
 const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
 /**
