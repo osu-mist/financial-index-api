@@ -4,9 +4,18 @@ const fs = require('fs');
 const yaml = require('js-yaml');
 const url = require('url');
 
-const api = appRoot.require('/package.json').name;
+// Configuration file won't exist until deployment.
+// Use dummy values if we can't load the configuration file.
+// TODO: Change this to a more scalable approach.
+const getConfigValues = () => {
+  try {
+    return config.get('server');
+  } catch (err) {
+    return { protocol: 'https', hostname: 'api.oregonstate.edu' };
+  }
+};
 
-const { protocol, hostname } = config.get('server');
+const { protocol, hostname } = getConfigValues();
 const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8'));
 
 /**
@@ -15,27 +24,23 @@ const { basePath } = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'u
  * @param {string} id
  * @returns A self link URL
  */
-const selfLink = id => url.format({
+const idSelfLink = (endpoint, id) => url.format({
   protocol,
   hostname,
-  pathname: `${basePath}/${api}/${id}`,
+  pathname: `${basePath}/${endpoint}/${id}`,
 });
 
 /**
- * @summary Paginated link builder
+ * @summary Top level query link builder
  * @function
- * @param {number} pageNumber Page number of results
- * @param {number} pageSize Number of results to return
- * @returns A paginated link URL
+ * @param {object} query
+ * @returns A url formatted with query parameters in the query object.
  */
-const paginatedLink = (pageNumber, pageSize) => url.format({
+const querySelfLink = (endpoint, query) => url.format({
   protocol,
   hostname,
-  pathname: `${basePath}/${api}`,
-  query: {
-    'page[number]': pageNumber,
-    'page[size]': pageSize,
-  },
+  pathname: `${basePath}/${endpoint}`,
+  query,
 });
 
-module.exports = { selfLink, paginatedLink };
+module.exports = { idSelfLink, querySelfLink };

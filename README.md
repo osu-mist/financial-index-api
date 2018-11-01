@@ -1,6 +1,6 @@
-# Express API Skeleton ![version](https://img.shields.io/badge/version-v1-blue.svg) [![swagger](https://img.shields.io/badge/swagger-2.0-green.svg)](./swagger.yaml)
+# Financial Index API ![version](https://img.shields.io/badge/version-v1-blue.svg) [![swagger](https://img.shields.io/badge/swagger-2.0-green.svg)](./swagger.yaml)
 
-Skeleton for Express APIs. API definition is contained in the [Swagger specification](./swagger.yaml).
+API to validate financial account index codes, which are used for purchasing. API definition is contained in the [Swagger specification](./swagger.yaml).
 
 ## Getting Started
 

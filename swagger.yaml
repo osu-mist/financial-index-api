@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: Express API Skeleton
-  description: Skeleton for Express APIs
+  title: Financial Index API
+  description: API to validate financial account indexes used for purchasing.
   version: v1
   license:
     name: GNU Affero General Public License Version 3
@@ -16,26 +16,37 @@ host: api.oregonstate.edu
 basePath: /v1
 externalDocs:
   description: GitHub Repository
-  url: https://github.com/osu-mist/express-api-skeleton
+  url: https://github.com/osu-mist/financial-index-api
 produces:
   - application/json
 paths:
-  /express-api-skeleton:
+  /finance/account-indexes:
     get:
-      summary: List all APIs
+      summary: Get account indexes.
       tags:
-        - apis
-      description: Get all APIs
-      operationId: getApis
+        - indexes
+      description: Get account indexes, filter by parameters. At least one parameter is required.
+      operationId: getAccountIndexes
       parameters:
+        - in: query
+          name: accountIndexCode
+          required: false
+          description: >
+            Trailing wild card and case insensitive query for indexes.
+            Example: /account-indexes?accountIndexCode=foo could return
+            FOO123 and FOO789.
+          type: string
+        - in: query
+          name: organizationCode
+          required: false
+          description: Get account indexes that match this organization code.
+          type: string
         - $ref: '#/parameters/authorization'
-        - $ref: '#/parameters/pageNumber'
-        - $ref: '#/parameters/pageSize'
       responses:
         200:
           description: Successful response
           schema:
-            $ref: '#/definitions/ApiResources'
+            $ref: '#/definitions/AccountIndexesResultObject'
         400:
           description: Bad Request
           schema:
@@ -44,27 +55,83 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/Errors'
-  /express-api-skeleton/{id}:
+  /finance/account-indexes/{accountIndexCode}:
     get:
-      summary: Info for a specific API
+      summary: Get a specific account index.
       tags:
-        - apis
-      description: Get API by unique ID
-      operationId: getApiById
+        - indexes
+      description: Get a specific account index code.
+      operationId: getAccountIndexByID
       parameters:
-        - $ref: '#/parameters/authorization'
-        - name: id
+        - name: accountIndexCode
           in: path
-          description: Unique API ID
+          description: Account index code
           required: true
           type: string
+        - $ref: '#/parameters/authorization'
       responses:
         200:
           description: Successful response
           schema:
-            $ref: '#/definitions/ApiResource'
+            $ref: '#/definitions/AccountIndexResultObject'
         404:
-          description: ApiResource not found
+          description: Account index not found
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+  /finance/activity-codes:
+    get:
+      summary: Get activity codes.
+      tags:
+        - activity-codes
+      description: Get a list of activity codes, query by activity code.
+      operationId: getActivityCodes
+      parameters:
+        - name: activityCode
+          in: query
+          description: >
+            Trailing wild card and case insensitive query for activity codes.
+            Example: /activity-codes?activityCode=a could return
+            ABC and AYZ.
+          type: string
+          required: true
+        - $ref: '#/parameters/authorization'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ActivityCodesResultObject'
+        400:
+          description: Bad request
+          schema:
+            $ref: '#/definitions/Errors'
+        500:
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/Errors'
+  /finance/activity-codes/{activityCode}:
+    get:
+      summary: Get a specific activity code.
+      tags:
+        - activity-codes
+      operationId: getActivityCodeByID
+      parameters:
+        - name: activityCode
+          in: path
+          description: Activity code.
+          type: string
+          required: true
+        - $ref: '#/parameters/authorization'
+      responses:
+        200:
+          description: Successful response
+          schema:
+            $ref: '#/definitions/ActivityCodeResultObject'
+        404:
+          description: Activity code not found
           schema:
             $ref: '#/definitions/Errors'
         500:
@@ -78,95 +145,145 @@ parameters:
     type: string
     required: true
     description: '"Bearer [token]" where [token] is your OAuth2 access token'
-  pageNumber:
-    name: page[number]
-    in: query
-    type: integer
-    required: false
-    description: Page number of results
-    default: 1
-  pageSize:
-    name: page[size]
-    in: query
-    type: integer
-    required: false
-    description: Number of results to return
-    default: 25
-    maximum: 500
 definitions:
-  Meta:
+  AccountIndexesResultObject:
     properties:
-      totalResults:
-        type: integer
-        description: Total number of results
-        example: 10
-      totalPage:
-        type: integer
-        description: Total number of pagess
-        example: 10
-      currentPageNumber:
-        type: integer
-        description: Page number of the returned results
-        example: 1
-      currentPageSize:
-        type: integer
-        description: Number of results per page
-        example: 25
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/AccountIndexResourceObject'
+  AccountIndexResultObject:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        $ref: '#/definitions/AccountIndexResourceObject'
+  AccountIndexResourceObject:
+    properties:
+      id:
+        $ref: '#/definitions/AccountIndexCode'
+      type:
+        type: string
+        example: account-indexes
+      attributes:
+        properties:
+          accountIndexCode:
+            $ref: '#/definitions/AccountIndexCode'
+          accountIndexTitle:
+            type: string
+            description: Short description of account index.
+          effectiveDate:
+            type: string
+            format: date
+            description: >
+              Date this account index record became effective.
+              This date will never be in the future.
+            example: "2017-12-31"
+          terminationDate:
+            type: string
+            format: date
+            description: >
+              Date this account index record will be terminated.
+              This date will always either be in the future or null.
+            example: "2018-12-31"
+          fundCode:
+            type: string
+            description: Fund code associated with this account index.
+          fundTitle:
+            type: string
+            description: Short description of fund code associated with this account index.
+          organizationCode:
+            type: string
+            description: Organization code associated with this account index.
+          organizationTitle:
+            type: string
+            description: Short description of organization code associated with this account index.
+          accountCode:
+            type: string
+            description: Account code associated with this account index.
+          accountTitle:
+            type: string
+            description: Short description of account code associated with this account index.
+          programCode:
+            type: string
+            description: Program code associated with this account index.
+          programTitle:
+            type: string
+            description: Short description of program code associated with this account index.
+          activityCode:
+            type: string
+            description: Activiy code associated with this account index.
+          activityTitle:
+            type: string
+            description: Short description of activity code associated with this account index.
+          locationCode:
+            type: string
+            description: Location code associated with this account index.
+          locationTitle:
+            type: string
+            description: Short description of location code associated with this account index.
+      links:
+        $ref: '#/definitions/SelfLink'
+  AccountIndexCode:
+    type: string
+    description: Unique account index code.
+    example: FOO123
+  ActivityCodesResultObject:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        type: array
+        items:
+          $ref: '#/definitions/ActivityCodeResourceObject'
+  ActivityCodeResultObject:
+    properties:
+      links:
+        $ref: '#/definitions/SelfLink'
+      data:
+        $ref: '#/definitions/ActivityCodeResourceObject'
+  ActivityCodeResourceObject:
+    properties:
+      id:
+        $ref: '#/definitions/ActivityCode'
+      type:
+        type: string
+        example: account-indexes
+      attributes:
+        properties:
+          activityCode:
+            $ref: '#/definitions/ActivityCode'
+          activityTitle:
+            type: string
+            description: Short description of activity code.
+          effectiveDate:
+            type: string
+            format: date
+            description: >
+              Date this activity code record became effective.
+              This date will never be in the future.
+            example: "2017-12-31"
+          terminationDate:
+            type: string
+            format: date
+            description: >
+              Date this activity code record will be terminated.
+              This date will always either be in the future or null.
+            example: "2018-12-31"
+      links:
+        $ref: '#/definitions/SelfLink'
+  ActivityCode:
+    type: string
+    description: Unique activity code.
+    example: ABCD
   SelfLink:
     properties:
       self:
         type: string
         format: url
         description: Self link of ApiResource
-  PaginationLinks:
-    properties:
-      first:
-        type: string
-        format: url
-        description: The first page of data
-      last:
-        type: string
-        format: url
-        description: The last page of data
-      prev:
-        type: string
-        format: url
-        description: The previous page of data
-      next:
-        type: string
-        format: url
-        description: The next page of data
-  ApiResource:
-    properties:
-      id:
-        type: string
-        description: A unique ID of API
-      type:
-        type: string
-        example: apis
-      links:
-        $ref: '#/definitions/SelfLink'
-      attributes:
-        properties:
-          name:
-            type: string
-            description: Name of API
-            example: Location Frontend API
-          repoUrl:
-            type: string
-            format: url
-            description: Repository URL of API
-            example: https://github.com/osu-mist/locations-frontend-api
-  ApiResources:
-    properties:
-      links:
-        $ref: '#/definitions/PaginationLinks'
-      meta:
-        $ref: '#/definitions/Meta'
-      data:
-        type: array
-        items:
-          $ref: '#/definitions/ApiResource'
   Error:
     properties:
       status:
