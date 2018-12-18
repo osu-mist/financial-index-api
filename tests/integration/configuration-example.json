@@ -16,7 +16,9 @@
     }
   },
   "test_cases": {
-    "valid_pet_ids": ["1", "2", "3"],
-    "invalid_pet_ids": ["999", "-1", "invalid_id"]
+      "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight", "IansSlushFund"],
+      "invalid_account_index_query": [""],
+      "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
+      "invalid_account_org_query": [""]
   }
 }

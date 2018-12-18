@@ -23,9 +23,7 @@ class integration_tests(unittest.TestCase):
 
     # Test case: GET /account-indexes with account index filter
     def test_get_account_query_index(self, endpoint='account-indexes'):
-        testing_indexes = ["AGR", "for", "ENG091", "eng261"]
-
-        for index in testing_indexes:
+        for index in self.test_cases['valid_account_index_query']:
             response = utils.make_request(self, endpoint, 200,
                                           params={'accountIndexCode': index})
             index_schema = utils.get_resource_schema(
@@ -37,11 +35,16 @@ class integration_tests(unittest.TestCase):
                 actual_index = resource['attributes']['accountIndexCode']
                 self.assertTrue(actual_index.lower().startswith(index.lower()))
 
+        for index in self.test_cases['invalid_account_index_query']:
+            response = utils.make_request(self, endpoint, 400,
+                                          params={'accountIndexCode': index})
+            error_schema = utils.get_resource_schema(
+                self, 'Error')
+            utils.check_schema(self, response, error_schema)
+
     # Test case: GET /account-indexes with organization filter
     def test_get_account_query_org(self, endpoint='account-indexes'):
-        testing_org = ['110015', '154230', '160000', '160600']
-
-        for org in testing_org:
+        for org in self.test_cases['valid_account_org_query']:
             response = utils.make_request(self, endpoint, 200,
                                           params={'organizationCode': org})
             index_schema = utils.get_resource_schema(
@@ -52,6 +55,13 @@ class integration_tests(unittest.TestCase):
             for resource in response_data:
                 actual_org = resource['attributes']['organizationCode']
                 self.assertEqual(actual_org, org)
+
+        for org in self.test_cases['invalid_account_org_query']:
+            response = utils.make_request(self, endpoint, 400,
+                                          params={'organizationCode': org})
+            error_schema = utils.get_resource_schema(
+                self, 'Error')
+            utils.check_schema(self, response, error_schema)
 
 
 if __name__ == '__main__':
