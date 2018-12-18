@@ -24,10 +24,19 @@ class integration_tests(unittest.TestCase):
     # Test case: GET /account-indexes with account index filter
     def test_get_account_indexes(self, endpoint='account-indexes'):
         testing_indexes = ["AGR", "for", "ENG091", "eng261"]
+
         for index in testing_indexes:
-            response = utils.make_request(self, endpoint, 200, params={'accountIndexCode': index})
-            index_schema = utils.get_resource_schema(self, 'AccountIndexResourceObject')
+            response = utils.make_request(self, endpoint, 200,
+                                          params={'accountIndexCode': index})
+            index_schema = utils.get_resource_schema(
+                self, 'AccountIndexResourceObject')
             utils.check_schema(self, response, index_schema)
+
+            response_data = response.json()['data']
+            for resource in response_data:
+                actual_index = resource['attributes']['accountIndexCode']
+                self.assertTrue(actual_index.lower().startswith(index.lower()))
+
 
 if __name__ == '__main__':
     arguments, argv = utils.parse_arguments()
