@@ -22,7 +22,7 @@ class integration_tests(unittest.TestCase):
         cls.session.close()
 
     # Test case: GET /account-indexes with account index filter
-    def test_get_account_indexes(self, endpoint='account-indexes'):
+    def test_get_account_query_index(self, endpoint='account-indexes'):
         testing_indexes = ["AGR", "for", "ENG091", "eng261"]
 
         for index in testing_indexes:
@@ -36,6 +36,22 @@ class integration_tests(unittest.TestCase):
             for resource in response_data:
                 actual_index = resource['attributes']['accountIndexCode']
                 self.assertTrue(actual_index.lower().startswith(index.lower()))
+
+    # Test case: GET /account-indexes with organization filter
+    def test_get_account_query_org(self, endpoint='account-indexes'):
+        testing_org = ['110015', '154230', '160000', '160600']
+
+        for org in testing_org:
+            response = utils.make_request(self, endpoint, 200,
+                                          params={'organizationCode': org})
+            index_schema = utils.get_resource_schema(
+                self, 'AccountIndexResourceObject')
+            utils.check_schema(self, response, index_schema)
+
+            response_data = response.json()['data']
+            for resource in response_data:
+                actual_org = resource['attributes']['organizationCode']
+                self.assertEqual(actual_org, org)
 
 
 if __name__ == '__main__':
