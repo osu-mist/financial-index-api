@@ -88,7 +88,6 @@ def make_request(self, endpoint, expected_status_code,
     requested_url = f'{self.base_url}{endpoint}'
     response = self.session.get(requested_url, params=params)
     logging.debug(f'Sent request to {requested_url}')
-
     # Response status code should be as expected
     status_code = response.status_code
     self.assertEqual(status_code, expected_status_code)
@@ -120,8 +119,9 @@ def check_schema(self, response, schema):
             'array': list,
             'object': dict
         }
-
-        if 'properties' in attribute:
+        if '$ref' in attribute:
+            openapi_type = __get_object_type(attribute['$ref'])
+        elif 'properties' in attribute:
             return dict
         elif 'format' in attribute and attribute['format'] in types_dict:
             openapi_type = attribute['format']
@@ -133,11 +133,18 @@ def check_schema(self, response, schema):
 
         return types_dict[openapi_type]
 
+    # Helper function to get type of referenced object
+    def __get_object_type(object_path):
+        keys = object_path.split("#/")[-1].split("/")
+        schema = self.openapi
+        for key in keys:
+            schema = schema[key]
+        return schema['type']
+
     # Helper function to check resource object schema
     def __check_resource_schema(resource):
         # Check resource type
-        self.assertEqual(resource['type'], schema['type']['enum'][0])
-
+        self.assertEqual(resource['type'], schema['type']['example'])
         # Check resource attributes
         actual_attributes = resource['attributes']
         expected_attributes = __get_schema_attributes()
@@ -155,7 +162,8 @@ def check_schema(self, response, schema):
         for field, actual_value in actual_attributes.items():
             expected_attribute = expected_attributes[field]
             expected_type = __get_attribute_type(expected_attribute)
-            self.assertIsInstance(actual_value, expected_type)
+            if (actual_value):
+                self.assertIsInstance(actual_value, expected_type)
 
     status_code = response.status_code
     content = get_json_content(self, response)
