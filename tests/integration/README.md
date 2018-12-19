@@ -58,7 +58,7 @@
 2. Run the integration test:
 
     ```shell
-    $ python integration.py -v --config path/to/configuration.json --openapi path/to/openapi.yaml
+    $ python integration.py -v --config path/to/configuration.json --openapi path/to/swagger.yaml
     ```
 
 ## Docker
@@ -66,10 +66,10 @@
 Use these commands to build and run the tests in a container. All you need installed is Docker. **Make sure you are in the root directory of the repository**.
 
 ```shell
-$ docker build -f tests/integration/Dockerfile -t <my-api>-integration-test .
+$ docker build -f tests/integration/Dockerfile -t financial-index-integration-test .
 $ docker run --rm \
              -v "$PWD"/tests/integration/configuration.json:/usr/src/app/configuration.json:ro \
-             <my-api>-integration-test
+             financial-index-integration-test
 ```
 
 ### Test on local instance from the Docker container
