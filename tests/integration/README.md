@@ -1,12 +1,10 @@
-# Template of Integration Test ![python](https://img.shields.io/badge/python-3.7-blue.svg)
-
-This directory contains template files that run integration tests against the API.
+# Financial Index Integration Test ![python](https://img.shields.io/badge/python-3.7-blue.svg)
 
 ## Configuration
 
 ### Test on local instance
 
-1. Start the API which should be tested locally.
+1. Start the Financial Index API which should be tested locally.
 2. copy
 [configuration-example.json](./configuration-example.json) as `configuration.json`  and modify it as necessary. For example:
 
@@ -28,7 +26,7 @@ This directory contains template files that run integration tests against the AP
 
 ### Test on production environment
 
-1. Register an application via [OSU Developer Portal](https://developer.oregonstate.edu/)
+1. Register an application via [OSU Developer Portal](https://developer.oregonstate.edu/), requesting permission for Financial Indexes
 2. Get `client_id` and `client_secret` from your app, then copy
 [configuration-example.json](./configuration-example.json) as `configuration.json` and modify it as necessary. For example:
 
