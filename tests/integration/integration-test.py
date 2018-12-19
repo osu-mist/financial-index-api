@@ -82,7 +82,7 @@ class integration_tests(unittest.TestCase):
             utils.check_schema(self, response, error_schema)
 
     # Test case: GET /activity-codes with activity code filter
-    def test_get_account_query_code(self, endpoint='activity-codes'):
+    def test_get_activity_query_code(self, endpoint='activity-codes'):
         for code in self.test_cases['valid_activity_code_query']:
             response = utils.make_request(self, endpoint, 200,
                                           params={'activityCode': code})
@@ -98,6 +98,24 @@ class integration_tests(unittest.TestCase):
         for code in self.test_cases['invalid_activity_code_query']:
             response = utils.make_request(self, endpoint, 400,
                                           params={'activityCode': code})
+            error_schema = utils.get_resource_schema(
+                self, 'Error')
+            utils.check_schema(self, response, error_schema)
+
+    # Test case: GET /account-indexes/{accountIndexCode}
+    def test_get_activity_url_code(self, endpoint='activity-codes'):
+        for code in self.test_cases['valid_activity_code_url']:
+            response = utils.make_request(self, f'{endpoint}/{code}', 200)
+            code_schema = utils.get_resource_schema(
+                self, 'ActivityCodeResourceObject')
+            utils.check_schema(self, response, code_schema)
+
+            actual_code = response.json(
+                )['data']['attributes']['activityCode']
+            self.assertEqual(actual_code, code)
+
+        for index in self.test_cases['invalid_activity_code_url']:
+            response = utils.make_request(self, endpoint, 400)
             error_schema = utils.get_resource_schema(
                 self, 'Error')
             utils.check_schema(self, response, error_schema)

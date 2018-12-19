@@ -22,7 +22,9 @@
       "invalid_account_org_query": [""],
       "valid_account_index_url": ["ENG091", "ENG261"],
       "invalid_account_index_url": ["AGR", "110015", "eng261", ""],
-      "valid_activity_code_query": ["TPOT", "hten", "T0", "ThisIsNotAnExistingActivtyCode"],
-      "invalid_activity_code_query": [""]
+      "valid_activity_code_query": ["TPOT", "efal", "T0", "ThisIsNotAnExistingActivtyCode"],
+      "invalid_activity_code_query": [""],
+      "valid_activity_code_url": ["TPOT", "EFAL"],
+      "invalid_activity_code_url": ["T0", "efal", "ThisIsNotAnExistingActivtyCode", ""]
   }
 }
