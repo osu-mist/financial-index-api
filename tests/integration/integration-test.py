@@ -63,6 +63,24 @@ class integration_tests(unittest.TestCase):
                 self, 'Error')
             utils.check_schema(self, response, error_schema)
 
+    # Test case: GET /account-indexes/{accountIndexCode}
+    def test_get_account_url_index(self, endpoint='account-indexes'):
+        for index in self.test_cases['valid_account_index_url']:
+            response = utils.make_request(self, f'{endpoint}/{index}', 200)
+            index_schema = utils.get_resource_schema(
+                self, 'AccountIndexResourceObject')
+            utils.check_schema(self, response, index_schema)
+
+            actual_index = response.json(
+                )['data']['attributes']['accountIndexCode']
+            self.assertEqual(actual_index, index)
+
+        for index in self.test_cases['invalid_account_index_url']:
+            response = utils.make_request(self, endpoint, 400)
+            error_schema = utils.get_resource_schema(
+                self, 'Error')
+            utils.check_schema(self, response, error_schema)
+
 
 if __name__ == '__main__':
     arguments, argv = utils.parse_arguments()
