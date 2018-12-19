@@ -16,9 +16,13 @@
     }
   },
   "test_cases": {
-      "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight", "IansSlushFund"],
+      "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight"],
       "invalid_account_index_query": [""],
       "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
-      "invalid_account_org_query": [""]
+      "invalid_account_org_query": [""],
+      "valid_account_index_url": ["ENG091", "ENG261"],
+      "invalid_account_index_url": ["AGR", "110015", "eng261", ""],
+      "valid_activity_code_query": ["TPOT", "hten", "T0", "ThisIsNotAnExistingActivtyCode"],
+      "invalid_activity_code_query": [""]
   }
 }

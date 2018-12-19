@@ -81,6 +81,27 @@ class integration_tests(unittest.TestCase):
                 self, 'Error')
             utils.check_schema(self, response, error_schema)
 
+    # Test case: GET /activity-codes with activity code filter
+    def test_get_account_query_code(self, endpoint='activity-codes'):
+        for code in self.test_cases['valid_activity_code_query']:
+            response = utils.make_request(self, endpoint, 200,
+                                          params={'activityCode': code})
+            code_schema = utils.get_resource_schema(
+                self, 'ActivityCodeResourceObject')
+            utils.check_schema(self, response, code_schema)
+
+            response_data = response.json()['data']
+            for resource in response_data:
+                actual_code = resource['attributes']['activityCode']
+                self.assertTrue(actual_code.lower().startswith(code.lower()))
+
+        for code in self.test_cases['invalid_activity_code_query']:
+            response = utils.make_request(self, endpoint, 400,
+                                          params={'activityCode': code})
+            error_schema = utils.get_resource_schema(
+                self, 'Error')
+            utils.check_schema(self, response, error_schema)
+
 
 if __name__ == '__main__':
     arguments, argv = utils.parse_arguments()
