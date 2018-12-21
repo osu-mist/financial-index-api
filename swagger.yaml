@@ -166,7 +166,7 @@ definitions:
         $ref: '#/definitions/AccountIndexCode'
       type:
         type: string
-        example: account-indexes
+        enum: [account-indexes]
       attributes:
         properties:
           accountIndexCode:
@@ -250,7 +250,7 @@ definitions:
         $ref: '#/definitions/ActivityCode'
       type:
         type: string
-        example: account-indexes
+        enum: [account-indexes]
       attributes:
         properties:
           activityCode:
