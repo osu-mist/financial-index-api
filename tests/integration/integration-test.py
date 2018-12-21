@@ -102,7 +102,7 @@ class integration_tests(unittest.TestCase):
                 self, 'Error')
             utils.check_schema(self, response, error_schema)
 
-    # Test case: GET /account-indexes/{accountIndexCode}
+    # Test case: GET /activity-codes/{activityCode}
     def test_get_activity_url_code(self, endpoint='activity-codes'):
         for code in self.test_cases['valid_activity_code_url']:
             response = utils.make_request(self, f'{endpoint}/{code}', 200)
