@@ -134,12 +134,29 @@ def check_schema(self, response, schema):
         return types_dict[openapi_type]
 
     # Helper function to get type of referenced object
-    def __get_object_type(object_path):
+    def __get_object_type(object_path, root_object_path=None):
+        if root_object_path is None:
+            root_object_path = object_path
         keys = object_path.split("#/")[-1].split("/")
-        schema = self.openapi
+        obj = self.openapi
         for key in keys:
-            schema = schema[key]
-        return schema['type']
+            obj = obj[key]
+
+        if '$ref' in obj:
+            # Avoid infinte recursion
+            if obj['$ref'] != root_object_path:
+                return __get_object_type(obj['$ref'], root_object_path)
+
+        if('format' in obj and obj['format'] in
+           __get_attribute_type.types_dict):
+            openapi_type = obj['format']
+        elif 'type' in obj:
+            openapi_type = obj['type']
+        else:
+            logging.warning('OpenAPI property contains no type or properties')
+            return None
+
+        return openapi_type
 
     # Helper function to check resource object schema
     def __check_resource_schema(resource):
