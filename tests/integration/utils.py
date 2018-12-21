@@ -147,14 +147,13 @@ def check_schema(self, response, schema):
             openapi_type = obj['format']
         elif 'type' in obj:
             openapi_type = obj['type']
-        else:
-            logging.warning('OpenAPI property contains no type or properties')
-            return None
-
-        if '$ref' in obj:
+        elif '$ref' in obj:
             # Avoid infinte recursion
             if obj['$ref'] != root_object_path:
                 return __get_object_type(obj['$ref'], root_object_path)
+        else:
+            logging.warning('OpenAPI property contains no type or properties')
+            return None
 
         return openapi_type
 
