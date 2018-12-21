@@ -185,3 +185,38 @@ def check_schema(self, response, schema):
                 __check_error_schema(error)
     except KeyError as error:
         self.fail(error)
+
+
+# Check response of an endpoint against path cases for schema, data validity
+def test_path_request(self, endpoint, resource, response_code, test_cases,
+                      test_assertion=None):
+    for test_case in test_cases:
+        test_request(self, endpoint + "/" + test_case, resource, response_code,
+                     "", "", test_assertion)
+
+
+# Check response of an endpoint against query cases for schema, data validity
+def test_request(self, endpoint, resource, response_code, param, test_cases,
+                 test_assertion=None):
+
+    schema = get_resource_schema(self, resource)
+    for test_case in test_cases:
+        response = make_request(self, endpoint, response_code,
+                                params={param: test_case})
+        check_schema(self, response, schema)
+
+        if (test_assertion):
+            for resource in response.json()['data']:
+                actual_case = resource['attributes'][param]
+                test_assertion(self, actual_case, test_case)
+
+
+class assertion_tests:
+    # Helper function to check if a response value starts with the test value
+    def actual_starts_with_test(self, actual_case, test_case):
+        self.assertTrue(actual_case.lower().startswith(test_case.lower()))
+
+    # Helper function to check if a response value is literally equal
+    # to the actual value
+    def actual_equals_test_str(self, actual_case, test_case):
+        self.assertTrue(str(actual_case), str(test_case))

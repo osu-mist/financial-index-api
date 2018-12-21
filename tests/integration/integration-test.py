@@ -22,103 +22,85 @@ class integration_tests(unittest.TestCase):
         cls.session.close()
 
     # Test case: GET /account-indexes with account index filter
-    def test_get_account_query_index(self, endpoint='account-indexes'):
-        for index in self.test_cases['valid_account_index_query']:
-            response = utils.make_request(self, endpoint, 200,
-                                          params={'accountIndexCode': index})
-            index_schema = utils.get_resource_schema(
-                self, 'AccountIndexResourceObject')
-            utils.check_schema(self, response, index_schema)
+    def test_get_account_query_index(self):
+        utils.test_request(
+            self, endpoint='account-indexes',
+            resource='AccountIndexResourceObject',
+            response_code=200,
+            param='accountIndexCode',
+            test_cases=self.test_cases['valid_account_index_query'],
+            test_assertion=utils.assertion_tests.actual_starts_with_test)
 
-            response_data = response.json()['data']
-            for resource in response_data:
-                actual_index = resource['attributes']['accountIndexCode']
-                self.assertTrue(actual_index.lower().startswith(index.lower()))
-
-        for index in self.test_cases['invalid_account_index_query']:
-            response = utils.make_request(self, endpoint, 400,
-                                          params={'accountIndexCode': index})
-            error_schema = utils.get_resource_schema(
-                self, 'Error')
-            utils.check_schema(self, response, error_schema)
+        utils.test_request(
+            self, endpoint='account-indexes',
+            resource='Error',
+            response_code=400,
+            param='accountIndexCode',
+            test_cases=self.test_cases['invalid_account_index_query'])
 
     # Test case: GET /account-indexes with organization filter
-    def test_get_account_query_org(self, endpoint='account-indexes'):
-        for org in self.test_cases['valid_account_org_query']:
-            response = utils.make_request(self, endpoint, 200,
-                                          params={'organizationCode': org})
-            index_schema = utils.get_resource_schema(
-                self, 'AccountIndexResourceObject')
-            utils.check_schema(self, response, index_schema)
+    def test_get_account_query_org(self):
+        utils.test_request(
+            self, endpoint='account-indexes',
+            resource='AccountIndexResourceObject',
+            response_code=200,
+            param='organizationCode',
+            test_cases=self.test_cases['valid_account_org_query'],
+            test_assertion=utils.assertion_tests.actual_equals_test_str)
 
-            response_data = response.json()['data']
-            for resource in response_data:
-                actual_org = resource['attributes']['organizationCode']
-                self.assertEqual(actual_org, org)
-
-        for org in self.test_cases['invalid_account_org_query']:
-            response = utils.make_request(self, endpoint, 400,
-                                          params={'organizationCode': org})
-            error_schema = utils.get_resource_schema(
-                self, 'Error')
-            utils.check_schema(self, response, error_schema)
+        utils.test_request(
+            self, endpoint='account-indexes',
+            resource='Error',
+            response_code=400,
+            param='accountIndexCode',
+            test_cases=self.test_cases['invalid_account_index_query'])
 
     # Test case: GET /account-indexes/{accountIndexCode}
-    def test_get_account_url_index(self, endpoint='account-indexes'):
-        for index in self.test_cases['valid_account_index_url']:
-            response = utils.make_request(self, f'{endpoint}/{index}', 200)
-            index_schema = utils.get_resource_schema(
-                self, 'AccountIndexResourceObject')
-            utils.check_schema(self, response, index_schema)
+    def test_get_account_url_index(self):
+        utils.test_path_request(
+            self, endpoint='account-indexes',
+            resource='AccountIndexResourceObject',
+            response_code=200,
+            test_cases=self.test_cases['valid_account_index_query'],
+            test_assertion=utils.assertion_tests.actual_equals_test_str)
 
-            actual_index = response.json(
-                )['data']['attributes']['accountIndexCode']
-            self.assertEqual(actual_index, index)
-
-        for index in self.test_cases['invalid_account_index_url']:
-            response = utils.make_request(self, endpoint, 400)
-            error_schema = utils.get_resource_schema(
-                self, 'Error')
-            utils.check_schema(self, response, error_schema)
+        utils.test_path_request(
+            self, endpoint='account-indexes',
+            resource='Error',
+            response_code=400,
+            test_cases=self.test_cases['invalid_account_index_query'])
 
     # Test case: GET /activity-codes with activity code filter
-    def test_get_activity_query_code(self, endpoint='activity-codes'):
-        for code in self.test_cases['valid_activity_code_query']:
-            response = utils.make_request(self, endpoint, 200,
-                                          params={'activityCode': code})
-            code_schema = utils.get_resource_schema(
-                self, 'ActivityCodeResourceObject')
-            utils.check_schema(self, response, code_schema)
+    def test_get_activity_query_code(self):
+        utils.test_request(
+            self, endpoint='activity-codes',
+            resource='ActivityCodeResourceObject',
+            response_code=200,
+            param='activityCode',
+            test_cases=self.test_cases['valid_activity_code_query'],
+            test_assertion=utils.assertion_tests.actual_starts_with_test)
 
-            response_data = response.json()['data']
-            for resource in response_data:
-                actual_code = resource['attributes']['activityCode']
-                self.assertTrue(actual_code.lower().startswith(code.lower()))
-
-        for code in self.test_cases['invalid_activity_code_query']:
-            response = utils.make_request(self, endpoint, 400,
-                                          params={'activityCode': code})
-            error_schema = utils.get_resource_schema(
-                self, 'Error')
-            utils.check_schema(self, response, error_schema)
+        utils.test_request(
+            self, endpoint='activity-codes',
+            resource='Error',
+            response_code=400,
+            param='activityCode',
+            test_cases=self.test_cases['invalid_activity_code_query'])
 
     # Test case: GET /activity-codes/{activityCode}
-    def test_get_activity_url_code(self, endpoint='activity-codes'):
-        for code in self.test_cases['valid_activity_code_url']:
-            response = utils.make_request(self, f'{endpoint}/{code}', 200)
-            code_schema = utils.get_resource_schema(
-                self, 'ActivityCodeResourceObject')
-            utils.check_schema(self, response, code_schema)
+    def test_get_activity_url_code(self):
+        utils.test_path_request(
+            self, endpoint='activity-codes',
+            resource='ActivityCodeResourceObject',
+            response_code=200,
+            test_cases=self.test_cases['valid_activity_code_url'],
+            test_assertion=utils.assertion_tests.actual_equals_test_str)
 
-            actual_code = response.json(
-                )['data']['attributes']['activityCode']
-            self.assertEqual(actual_code, code)
-
-        for index in self.test_cases['invalid_activity_code_url']:
-            response = utils.make_request(self, endpoint, 400)
-            error_schema = utils.get_resource_schema(
-                self, 'Error')
-            utils.check_schema(self, response, error_schema)
+        utils.test_path_request(
+            self, endpoint='actiity-codes',
+            resource='Error',
+            response_code=200,
+            test_cases=self.test_cases['invalid_activity_code_url'])
 
 
 if __name__ == '__main__':
