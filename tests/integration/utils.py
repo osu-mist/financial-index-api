@@ -120,7 +120,7 @@ def check_schema(self, response, schema):
             'object': dict
         }
         if '$ref' in attribute:
-            openapi_type = __get_object_type(attribute['$ref'])
+            openapi_type = __get_object_type(attribute['$ref'], types_dict)
         elif 'properties' in attribute:
             return dict
         elif 'format' in attribute and attribute['format'] in types_dict:
@@ -134,7 +134,7 @@ def check_schema(self, response, schema):
         return types_dict[openapi_type]
 
     # Helper function to get type of referenced object
-    def __get_object_type(object_path, root_object_path=None):
+    def __get_object_type(object_path, types_dict, root_object_path=None):
         if root_object_path is None:
             root_object_path = object_path
         keys = object_path.split("#/")[-1].split("/")
@@ -142,20 +142,18 @@ def check_schema(self, response, schema):
         for key in keys:
             obj = obj[key]
 
-        if('format' in obj and obj['format'] in
-           __get_attribute_type.types_dict):
-            openapi_type = obj['format']
+        if 'format' in obj and obj['format'] in types_dict:
+            return obj['format']
         elif 'type' in obj:
-            openapi_type = obj['type']
+            return obj['type']
         elif '$ref' in obj:
-            # Avoid infinte recursion
+            # Avoid infinite recursion
             if obj['$ref'] != root_object_path:
-                return __get_object_type(obj['$ref'], root_object_path)
+                return __get_object_type(obj['$ref'], types_dict,
+                                         root_object_path)
         else:
             logging.warning('OpenAPI property contains no type or properties')
             return None
-
-        return openapi_type
 
     # Helper function to check resource object schema
     def __check_resource_schema(resource):
@@ -178,7 +176,7 @@ def check_schema(self, response, schema):
         for field, actual_value in actual_attributes.items():
             expected_attribute = expected_attributes[field]
             expected_type = __get_attribute_type(expected_attribute)
-            if (actual_value):
+            if actual_value:
                 self.assertIsInstance(actual_value, expected_type)
 
     status_code = response.status_code
@@ -221,7 +219,7 @@ def test_request(self, endpoint, resource, response_code, param, test_cases,
                                 params={param: test_case})
         check_schema(self, response, schema)
 
-        if (test_assertion):
+        if test_assertion:
             for resource in response.json()['data']:
                 actual_case = resource['attributes'][param]
                 test_assertion(self, actual_case, test_case)
