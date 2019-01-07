@@ -127,11 +127,12 @@ def check_schema(self, response, schema):
             openapi_type = attribute['format']
         elif 'type' in attribute:
             openapi_type = attribute['type']
-        else:
-            logging.warning('OpenAPI property contains no type or properties')
-            return None
 
-        return types_dict[openapi_type]
+        if openapi_type:
+            return types_dict[openapi_type]
+
+        logging.warning('OpenAPI property contains no type or properties')
+        return None
 
     # Helper function to get type of referenced object
     def __get_object_type(object_path, types_dict, root_object_paths=[]):
@@ -152,9 +153,9 @@ def check_schema(self, response, schema):
                 root_object_paths.append(obj['$ref'])
                 return __get_object_type(obj['$ref'], types_dict,
                                          root_object_paths)
-        else:
-            logging.warning('OpenAPI property contains no type or properties')
-            return None
+
+        logging.warning('OpenAPI property contains no type or properties')
+        return None
 
     # Helper function to check resource object schema
     def __check_resource_schema(resource):
@@ -176,9 +177,8 @@ def check_schema(self, response, schema):
     def __check_attributes_schema(actual_attributes, expected_attributes):
         for field, actual_value in actual_attributes.items():
             expected_attribute = expected_attributes[field]
-            print(field, actual_value, expected_attribute)
             expected_type = __get_attribute_type(expected_attribute)
-            if actual_value:
+            if actual_value and expected_type:
                 self.assertIsInstance(actual_value, expected_type)
 
     status_code = response.status_code
