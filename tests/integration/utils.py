@@ -3,6 +3,7 @@ import json
 import logging
 import requests
 import sys
+import unittest
 
 
 # Handler for parsing command-line arguments
@@ -227,7 +228,7 @@ def test_request(self, endpoint, resource, response_code, param, test_cases,
                 test_assertion(self, actual_case, test_case)
 
 
-class assertion_tests:
+class assertion_tests(unittest.TestCase):
     # Helper function to check if a response value starts with the test value
     def actual_starts_with_test(self, actual_case, test_case):
         self.assertTrue(actual_case.lower().startswith(test_case.lower()))
