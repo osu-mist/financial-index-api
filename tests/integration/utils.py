@@ -122,14 +122,15 @@ def check_schema(self, response, schema):
 
     # Helper function to map between OpenAPI data types and python data types
     def __get_attribute_type(attribute):
-        if '$ref' in attribute:
-            openapi_type = __get_object_type(attribute['$ref'])
-        elif 'properties' in attribute:
+        openapi_type = None
+        if 'properties' in attribute:
             return dict
         elif 'format' in attribute and attribute['format'] in types_dict:
             openapi_type = attribute['format']
         elif 'type' in attribute:
             openapi_type = attribute['type']
+        elif '$ref' in attribute:
+            openapi_type = __get_object_type(attribute['$ref'])
 
         if openapi_type:
             return types_dict[openapi_type]
@@ -158,7 +159,6 @@ def check_schema(self, response, schema):
                 root_object_paths.append(obj['$ref'])
                 return __get_object_type(obj['$ref'], root_object_paths)
 
-        logging.warning('OpenAPI property contains no type or properties')
         return None
 
     # Helper function to check resource object schema
