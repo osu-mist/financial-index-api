@@ -136,7 +136,9 @@ def check_schema(self, response, schema):
         return None
 
     # Helper function to get type of referenced object
-    def __get_object_type(object_path, types_dict, root_object_paths=[]):
+    def __get_object_type(object_path, types_dict, root_object_paths=None):
+        if root_object_paths is None:
+            root_object_paths = []
         keys = object_path.split("#/")[-1].split("/")
         obj = self.openapi
         for key in keys:
