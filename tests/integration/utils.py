@@ -103,25 +103,27 @@ def make_request(self, endpoint, expected_status_code,
 
 # Check the schema of response match OpenAPI specification
 def check_schema(self, response, schema):
+    # Mapping of OpenAPI data types and python data types
+    types_dict = {
+        'string': str,
+        'integer': int,
+        'int32': int,
+        'int64': int,
+        'float': float,
+        'double': float,
+        'boolean': bool,
+        'array': list,
+        'object': dict
+    }
+
     # Helper function to get attributes of the schema
     def __get_schema_attributes():
         return schema['attributes']['properties']
 
     # Helper function to map between OpenAPI data types and python data types
     def __get_attribute_type(attribute):
-        types_dict = {
-            'string': str,
-            'integer': int,
-            'int32': int,
-            'int64': int,
-            'float': float,
-            'double': float,
-            'boolean': bool,
-            'array': list,
-            'object': dict
-        }
         if '$ref' in attribute:
-            openapi_type = __get_object_type(attribute['$ref'], types_dict)
+            openapi_type = __get_object_type(attribute['$ref'])
         elif 'properties' in attribute:
             return dict
         elif 'format' in attribute and attribute['format'] in types_dict:
@@ -136,7 +138,7 @@ def check_schema(self, response, schema):
         return None
 
     # Helper function to get type of referenced object
-    def __get_object_type(object_path, types_dict, root_object_paths=None):
+    def __get_object_type(object_path, root_object_paths=None):
         if root_object_paths is None:
             root_object_paths = []
         keys = object_path.split("#/")[-1].split("/")
@@ -154,8 +156,7 @@ def check_schema(self, response, schema):
                 root_object_paths.append(object_path)
             if obj['$ref'] not in root_object_paths:
                 root_object_paths.append(obj['$ref'])
-                return __get_object_type(obj['$ref'], types_dict,
-                                         root_object_paths)
+                return __get_object_type(obj['$ref'], root_object_paths)
 
         logging.warning('OpenAPI property contains no type or properties')
         return None
