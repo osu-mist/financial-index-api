@@ -1,0 +1,30 @@
+{
+  "local_test": true,
+  "api": {
+    "local_base_url": "https://localhost:8080/api/v1/finance/account-indexes",
+    "base_url": "https://api.oregonstate.edu/v1/finance/"
+  },
+  "auth": {
+    "basic_auth": {
+      "username": "username",
+      "password": "password"
+    },
+    "oauth2": {
+      "token_api_url": "https://api.oregonstate.edu/oauth2/token",
+      "client_id": "client_id",
+      "client_secret": "client_secret"
+    }
+  },
+  "test_cases": {
+      "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight"],
+      "invalid_account_index_query": [""],
+      "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
+      "invalid_account_org_query": [""],
+      "valid_account_index_url": ["ENG091", "ENG261"],
+      "invalid_account_index_url": ["AGR", "110015", "eng261", ""],
+      "valid_activity_code_query": ["TPOT", "efal", "T0", "ThisIsNotAnExistingActivtyCode"],
+      "invalid_activity_code_query": [""],
+      "valid_activity_code_url": ["TPOT", "EFAL"],
+      "invalid_activity_code_url": ["T0", "efal", "ThisIsNotAnExistingActivtyCode", ""]
+  }
+}
