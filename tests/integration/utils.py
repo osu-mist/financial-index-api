@@ -106,6 +106,7 @@ def check_schema(self, response, schema):
     # Mapping of OpenAPI data types and python data types
     types_dict = {
         'string': str,
+        'number': float,
         'integer': int,
         'int32': int,
         'int64': int,
