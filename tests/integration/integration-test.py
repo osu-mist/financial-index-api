@@ -22,8 +22,8 @@ class integration_tests(unittest.TestCase):
         cls.session.close()
 
     # Test case: GET /account-indexes with account index filter
-    def test_get_account_query_index(self):
-        utils.test_request(
+    def test_get_account_index_query(self):
+        utils.test_query_request(
             self, endpoint='account-indexes',
             resource='AccountIndexResourceObject',
             response_code=200,
@@ -31,7 +31,7 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['valid_account_index_query'],
             test_assertion=utils.assertion_tests.actual_starts_with_test)
 
-        utils.test_request(
+        utils.test_query_request(
             self, endpoint='account-indexes',
             resource='Error',
             response_code=400,
@@ -39,8 +39,8 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['invalid_account_index_query'])
 
     # Test case: GET /account-indexes with organization filter
-    def test_get_account_query_org(self):
-        utils.test_request(
+    def test_get_account_org_query(self):
+        utils.test_query_request(
             self, endpoint='account-indexes',
             resource='AccountIndexResourceObject',
             response_code=200,
@@ -48,7 +48,7 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['valid_account_org_query'],
             test_assertion=utils.assertion_tests.actual_equals_test_str)
 
-        utils.test_request(
+        utils.test_query_request(
             self, endpoint='account-indexes',
             resource='Error',
             response_code=400,
@@ -56,23 +56,24 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['invalid_account_index_query'])
 
     # Test case: GET /account-indexes/{accountIndexCode}
-    def test_get_account_url_index(self):
+    def test_get_account_index_path(self):
         utils.test_path_request(
             self, endpoint='account-indexes',
             resource='AccountIndexResourceObject',
             response_code=200,
-            test_cases=self.test_cases['valid_account_index_query'],
+            param='accountIndexCode',
+            test_cases=self.test_cases['valid_account_index_path'],
             test_assertion=utils.assertion_tests.actual_equals_test_str)
 
         utils.test_path_request(
             self, endpoint='account-indexes',
             resource='Error',
-            response_code=400,
-            test_cases=self.test_cases['invalid_account_index_query'])
+            response_code=404,
+            test_cases=self.test_cases['invalid_account_index_path'])
 
     # Test case: GET /activity-codes with activity code filter
-    def test_get_activity_query_code(self):
-        utils.test_request(
+    def test_get_activity_code_query(self):
+        utils.test_query_request(
             self, endpoint='activity-codes',
             resource='ActivityCodeResourceObject',
             response_code=200,
@@ -80,7 +81,7 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['valid_activity_code_query'],
             test_assertion=utils.assertion_tests.actual_starts_with_test)
 
-        utils.test_request(
+        utils.test_query_request(
             self, endpoint='activity-codes',
             resource='Error',
             response_code=400,
@@ -88,19 +89,20 @@ class integration_tests(unittest.TestCase):
             test_cases=self.test_cases['invalid_activity_code_query'])
 
     # Test case: GET /activity-codes/{activityCode}
-    def test_get_activity_url_code(self):
+    def test_get_activity_code_path(self):
         utils.test_path_request(
             self, endpoint='activity-codes',
             resource='ActivityCodeResourceObject',
             response_code=200,
-            test_cases=self.test_cases['valid_activity_code_url'],
+            param='activityCode',
+            test_cases=self.test_cases['valid_activity_code_path'],
             test_assertion=utils.assertion_tests.actual_equals_test_str)
 
         utils.test_path_request(
-            self, endpoint='actiity-codes',
+            self, endpoint='activity-codes',
             resource='Error',
-            response_code=200,
-            test_cases=self.test_cases['invalid_activity_code_url'])
+            response_code=404,
+            test_cases=self.test_cases['invalid_activity_code_path'])
 
 
 if __name__ == '__main__':
