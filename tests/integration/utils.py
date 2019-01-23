@@ -210,22 +210,25 @@ def check_schema(self, response, schema):
 
 # Check response of an endpoint against path cases for schema, data validity
 def test_path_request(self, endpoint, resource, response_code, test_cases,
-                      test_assertion=None):
+                      param=None, test_assertion=None):
+    schema = get_resource_schema(self, resource)
     for test_case in test_cases:
-        test_request(self, endpoint + "/" + test_case, resource, response_code,
-                     "", "", test_assertion)
+        response = make_request(self, f'{endpoint}/{test_case}',
+                                response_code)
+        check_schema(self, response, schema)
+        if test_assertion:
+            actual_case = response.json()['data']['attributes'][param]
+            test_assertion(self, actual_case, test_case)
 
 
 # Check response of an endpoint against query cases for schema, data validity
-def test_request(self, endpoint, resource, response_code, param, test_cases,
-                 test_assertion=None):
-
+def test_query_request(self, endpoint, resource, response_code, test_cases,
+                       param, test_assertion=None):
     schema = get_resource_schema(self, resource)
     for test_case in test_cases:
         response = make_request(self, endpoint, response_code,
                                 params={param: test_case})
         check_schema(self, response, schema)
-
         if test_assertion:
             for resource in response.json()['data']:
                 actual_case = resource['attributes'][param]
