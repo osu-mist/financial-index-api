@@ -213,7 +213,7 @@ def test_path_request(self, endpoint, resource, response_code, test_cases,
                       param=None, test_assertion=None):
     schema = get_resource_schema(self, resource)
     for test_case in test_cases:
-        response = make_request(self, endpoint + "/" + test_case,
+        response = make_request(self, f'{endpoint}/{test_case}',
                                 response_code)
         check_schema(self, response, schema)
         if test_assertion:
