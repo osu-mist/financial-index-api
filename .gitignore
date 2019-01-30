@@ -73,3 +73,5 @@ bin
 
 # Integration Testing
 /tests/integration/configuration.json
+
+__pycache__/

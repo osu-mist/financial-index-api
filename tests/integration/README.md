@@ -58,7 +58,7 @@
 2. Run the integration test:
 
     ```shell
-    $ python integration.py -v --config path/to/configuration.json --openapi path/to/swagger.yaml
+    $ python integration-test.py -v --config path/to/configuration.json --openapi path/to/swagger.yaml
     ```
 
 ## Docker
