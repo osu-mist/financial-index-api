@@ -91,6 +91,11 @@ def make_request(self, endpoint, expected_status_code,
     logging.debug(f'Sent request to {requested_url}')
     # Response status code should be as expected
     status_code = response.status_code
+    if status_code != expected_status_code:
+        logging.info(f'''
+        Unexpected status code for {requested_url}
+        Expected {expected_status_code}, recieved {status_code}
+        Response body: {response.text}''')
     self.assertEqual(status_code, expected_status_code)
 
     # Response time should less then max_elapsed_seconds
