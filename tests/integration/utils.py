@@ -4,6 +4,7 @@ import logging
 import requests
 import sys
 import unittest
+import textwrap
 
 
 # Handler for parsing command-line arguments
@@ -92,10 +93,12 @@ def make_request(self, endpoint, expected_status_code,
     # Response status code should be as expected
     status_code = response.status_code
     if status_code != expected_status_code:
-        logging.info(f'''
-        Unexpected status code for {requested_url}
-        Expected {expected_status_code}, recieved {status_code}
-        Response body: {response.text}''')
+        response_code_details = textwrap.dedent(f'''
+            Unexpected status code for {requested_url}, params = {params}
+            Expected {expected_status_code}, recieved {status_code}
+            Response body:''')
+        response_body = json.dumps(response.json(), indent=4)
+        logging.info(f'{response_code_details} \n {response_body})')
     self.assertEqual(status_code, expected_status_code)
 
     # Response time should less then max_elapsed_seconds
