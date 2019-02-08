@@ -115,5 +115,5 @@ if __name__ == '__main__':
         logging.basicConfig(level=logging.INFO)
 
     integration_tests.setup(arguments.config_path, arguments.openapi_path)
-    unittest.main(argv=argv, exit=False)
+    unittest.main(argv=argv)
     integration_tests.cleanup()
