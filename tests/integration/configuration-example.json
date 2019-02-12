@@ -19,7 +19,6 @@
     "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight"],
     "invalid_account_index_query": [""],
     "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
-    "invalid_account_org_query": [""],
     "valid_account_index_path": ["ENG091", "ENG261", "ENG251", "ENG201"],
     "invalid_account_index_path_with_no_number": ["AGR", "ENG", "ECE", "MTH"],
     "invalid_capitalization_account_index_path": ["eng261", "Eng091", "EnG251"],
