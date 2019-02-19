@@ -18,13 +18,14 @@
   "test_cases": {
       "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight"],
       "invalid_account_index_query": [""],
-      "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
       "invalid_account_org_query": [""],
-      "valid_account_index_path": ["ENG091", "ENG261"],
-      "invalid_account_index_path": ["AGR", "110015", "eng261"],
+      "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
+      "valid_account_index_path": ["ENG091", "ENG261", "ENG251", "ENG201"],
+      "invalid_account_index_path": ["AGR", "ENG", "ECE", "MTH", "eng261", "Eng091", "110015", "119003"],
+      "non_existing_account_index_path": ["110015", "119003", "379458", "740054"],
       "valid_activity_code_query": ["TPOT", "efal", "T0", "ThisIsNotAnExistingActivtyCode"],
       "invalid_activity_code_query": [""],
       "valid_activity_code_path": ["TPOT", "EFAL"],
-      "invalid_activity_code_path": ["T0", "efal", "ThisIsNotAnExistingActivtyCode"]
+      "non_existing_activity_code_path": ["T0", "hello", "ThisIsNotAnExistingActivtyCode", "tpot", "efal"]
   }
 }
