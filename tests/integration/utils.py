@@ -111,63 +111,38 @@ def make_request(self, endpoint, expected_status_code,
 
 # Check the schema of response match OpenAPI specification
 def check_schema(self, response, schema):
-    # Mapping of OpenAPI data types and python data types
-    types_dict = {
-        'string': str,
-        'number': float,
-        'integer': int,
-        'int32': int,
-        'int64': int,
-        'float': float,
-        'double': float,
-        'boolean': bool,
-        'array': list,
-        'object': dict
-    }
-
     # Helper function to get attributes of the schema
     def __get_schema_attributes():
         return schema['attributes']['properties']
 
     # Helper function to map between OpenAPI data types and python data types
     def __get_attribute_type(attribute):
-        openapi_type = None
+        types_dict = {
+            'string': str,
+            'number': float,
+            'integer': int,
+            'int32': int,
+            'int64': int,
+            'float': float,
+            'double': float,
+            'boolean': bool,
+            'array': list,
+            'object': dict
+        }
+
         if 'properties' in attribute:
             return dict
         elif 'format' in attribute and attribute['format'] in types_dict:
             openapi_type = attribute['format']
         elif 'type' in attribute:
             openapi_type = attribute['type']
-        elif '$ref' in attribute:
-            openapi_type = __get_object_type(attribute['$ref'])
+        else:
+            logging.warning('OpenAPI property contains no type or properties')
+            return None
 
-        if openapi_type:
-            return types_dict[openapi_type]
+        return types_dict[openapi_type]
 
         logging.warning('OpenAPI property contains no type or properties')
-        return None
-
-    # Helper function to get type of referenced object
-    def __get_object_type(object_path, root_object_paths=None):
-        if root_object_paths is None:
-            root_object_paths = []
-        keys = object_path.split("#/")[-1].split("/")
-        obj = self.openapi
-        for key in keys:
-            obj = obj[key]
-
-        if 'format' in obj and obj['format'] in types_dict:
-            return obj['format']
-        elif 'type' in obj:
-            return obj['type']
-        elif '$ref' in obj:
-            # Avoid infinite recursion
-            if root_object_paths is []:
-                root_object_paths.append(object_path)
-            if obj['$ref'] not in root_object_paths:
-                root_object_paths.append(obj['$ref'])
-                return __get_object_type(obj['$ref'], root_object_paths)
-
         return None
 
     # Helper function to check resource object schema
