@@ -8,7 +8,7 @@ COPY swagger.yaml .
 RUN pip install --no-cache-dir -r requirements.txt
 
 RUN /bin/bash -c \
-    'OUTPUT=$(head -n 1 openapi.yaml); \
+    'OUTPUT=$(head -n 1 swagger.yaml); \
     if [[ $OUTPUT == *"swagger"* ]]; then \
         pip install --no-cache flex; \
     else \
