@@ -12,12 +12,12 @@ const swagger = yaml.safeLoad(fs.readFileSync(`${appRoot}/swagger.yaml`, 'utf8')
 const api = appRoot.require('/package.json').name;
 
 const accountIndexProperties = swagger.definitions.AccountIndexResourceObject.properties;
-const accountIndexResourceType = accountIndexProperties.type.example;
+const accountIndexResourceType = accountIndexProperties.type.enum[0];
 const accountIndexKeys = _.keys(accountIndexProperties.attributes.properties);
 const accountIndexEndpoint = `${api}/account-indexes`;
 
 const activityCodeProperties = swagger.definitions.ActivityCodeResourceObject.properties;
-const activityCodeResourceType = activityCodeProperties.type.example;
+const activityCodeResourceType = activityCodeProperties.type.enum[0];
 const activityCodeKeys = _.keys(activityCodeProperties.attributes.properties);
 const activityCodesEndpoint = `${api}/activity-codes`;
 
