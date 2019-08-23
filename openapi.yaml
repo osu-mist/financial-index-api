@@ -55,7 +55,7 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResult'
-  /finance/account-indexes/{accountIndexCode}:
+  /finance/account-indexes/{accountIndexCodeId}:
     get:
       summary: Get a specific account index.
       tags:
@@ -63,7 +63,7 @@ paths:
       description: Get a specific account index code.
       operationId: getAccountIndexById
       parameters:
-        - name: accountIndexCode
+        - name: accountIndexCodeId
           in: path
           description: Account index code
           required: true
@@ -112,14 +112,14 @@ paths:
           description: Internal Server Error
           schema:
             $ref: '#/definitions/ErrorResult'
-  /finance/activity-codes/{activityCode}:
+  /finance/activity-codes/{activityCodeId}:
     get:
       summary: Get a specific activity code.
       tags:
         - activity-codes
       operationId: getActivityCodeById
       parameters:
-        - name: activityCode
+        - name: activityCodeId
           in: path
           description: Activity code.
           type: string

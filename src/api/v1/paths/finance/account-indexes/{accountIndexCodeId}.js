@@ -9,8 +9,8 @@ import { getAccountIndexById } from '../../../db/oracledb/finance-dao';
  */
 const get = async (req, res) => {
   try {
-    const { accountIndexCode } = req.params;
-    const result = await getAccountIndexById({ accountIndexCode });
+    const { accountIndexCodeId } = req.params;
+    const result = await getAccountIndexById({ accountIndexCodeId });
     if (!result) {
       errorBuilder(res, 404, 'The account index code was not found.');
     } else {

@@ -9,8 +9,8 @@ import { getActivityCodeById } from '../../../db/oracledb/finance-dao';
  */
 const get = async (req, res) => {
   try {
-    const { activityCode } = req.params;
-    const result = await getActivityCodeById({ activityCode });
+    const { activityCodeId } = req.params;
+    const result = await getActivityCodeById({ activityCodeId });
     if (!result) {
       errorBuilder(res, 404, 'The activity code was not found.');
     } else {

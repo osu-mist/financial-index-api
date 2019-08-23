@@ -1,7 +1,7 @@
 import _ from 'lodash';
 
 import { getConnection } from './connection';
-import contrib from './contrib/contrib';
+import { contrib } from './contrib/contrib';
 import * as financeSerializer from '../../serializers/finance-serializer';
 
 /**
