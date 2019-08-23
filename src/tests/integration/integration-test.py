@@ -34,73 +34,128 @@ class integration_tests(unittest.TestCase):
     def cleanup(cls):
         cls.session.close()
 
-    # Test case: GET /pets
-    def test_get_all_pets(self, endpoint='/pets'):
-        nullable_fields = ['owner']
-        utils.test_endpoint(self, endpoint, 'PetResource', 200,
-                            nullable_fields=nullable_fields)
-
-    # Test case: GET /pets with species filter
-    def test_get_pets_with_filter(self, endpoint='/pets'):
-        testing_species = ['dog', 'CAT', 'tUrTlE']
-
-        for species in testing_species:
-            params = {'species': species}
-            response = utils.test_endpoint(self, endpoint, 'PetResource', 200,
-                                           query_params=params)
-
-            response_data = response.json()['data']
-            for resource in response_data:
-                actual_species = resource['attributes']['species']
-                self.assertEqual(actual_species.lower(), species.lower())
-
-    # Test case: GET /pets with pagination parameters
-    def test_get_pets_pagination(self, endpoint='/pets'):
-        testing_paginations = [
-            {'number': 1, 'size': 25, 'expected_status_code': 200},
-            {'number': 1, 'size': None, 'expected_status_code': 200},
-            {'number': None, 'size': 25, 'expected_status_code': 200},
-            {'number': 999, 'size': 1, 'expected_status_code': 200},
-            {'number': -1, 'size': 25, 'expected_status_code': 400},
-            {'number': 1, 'size': -1, 'expected_status_code': 400},
-            {'number': 1, 'size': 501, 'expected_status_code': 400}
-        ]
-        nullable_fields = ['owner']
-        for pagination in testing_paginations:
-            params = {f'page[{k}]': pagination[k] for k in ['number', 'size']}
-            expected_status_code = pagination['expected_status_code']
-            resource = (
-                'PetResource' if expected_status_code == 200
-                else 'ErrorObject'
+    # Test case: GET /account-indexes with account index filter
+    def test_valid_get_account_index_query(self):
+        for account_index in self.test_cases['valid_account_index_query']:
+            utils.test_endpoint(
+                self, endpoint='account-indexes',
+                resource='AccountIndexResource',
+                response_code=200,
+                query_params={'accountIndexCode': account_index},
+                nullable_fields=[
+                    'terminationDate',
+                    'accountCode',
+                    'accountTitle',
+                    'activityCode',
+                    'activityTitle',
+                    'locationCode',
+                    'locationTitle'
+                ]
             )
-            response = utils.test_endpoint(self, endpoint, resource,
-                                           expected_status_code,
-                                           query_params=params,
-                                           nullable_fields=nullable_fields)
-            content = utils.get_json_content(self, response)
-            if expected_status_code == 200:
-                try:
-                    meta = content['meta']
-                    num = pagination['number'] if pagination['number'] else 1
-                    size = pagination['size'] if pagination['size'] else 25
 
-                    self.assertEqual(num, meta['currentPageNumber'])
-                    self.assertEqual(size, meta['currentPageSize'])
-                except KeyError as error:
-                    self.fail(error)
+    # Test case: GET /account-indexes with organization filter
+    def test_valid_get_account_org_query(self):
+        for account_org in self.test_cases['valid_account_org_query']:
+            utils.test_endpoint(
+                self, endpoint='account-indexes',
+                resource='AccountIndexResource',
+                response_code=200,
+                query_params={'organizationCode': account_org},
+                nullable_fields=[
+                    'terminationDate',
+                    'accountCode',
+                    'accountTitle',
+                    'activityCode',
+                    'activityTitle',
+                    'locationCode',
+                    'locationTitle'
+                ]
+            )
 
-    # Test case: GET /pets/{id}
-    def test_get_pet_by_id(self, endpoint='/pets'):
-        valid_pet_ids = self.test_cases['valid_pet_ids']
-        invalid_pet_ids = self.test_cases['invalid_pet_ids']
+    # Test bad request /account-indexes with account index filter
+    # and /account-indexes with organization filter
+    def test_get_account_query_invalid_parameters(self):
+        params = {
+            'accountIndexCode': 'invalid_account_index_query',
+            'organizationCode': 'invalid_account_org_query'
+        }
+        for key, test_case in params.items():
+            for value in self.test_cases[test_case]:
+                utils.test_endpoint(
+                    self, endpoint='account-indexes',
+                    resource='ErrorObject',
+                    response_code=400,
+                    query_params={key: value}
+                )
 
-        for pet_id in valid_pet_ids:
-            resource = 'PetResource'
-            utils.test_endpoint(self, f'{endpoint}/{pet_id}', resource, 200)
+    # Test case: GET /account-indexes/{accountIndexCode}
+    def test_valid_get_account_index_path(self):
+        for account_index in self.test_cases['valid_account_index_path']:
+            utils.test_endpoint(
+                self, endpoint=f'account-indexes/{account_index}',
+                resource='AccountIndexResource',
+                response_code=200,
+                nullable_fields=[
+                    'terminationDate',
+                    'accountCode',
+                    'accountTitle',
+                    'activityCode',
+                    'activityTitle',
+                    'locationCode',
+                    'locationTitle'
+                ]
+            )
 
-        for pet_id in invalid_pet_ids:
-            resource = 'ErrorObject'
-            utils.test_endpoint(self, f'{endpoint}/{pet_id}', resource, 404)
+    def test_invalid_get_account_index_path(self):
+        for account_index in self.test_cases['invalid_account_index_path']:
+            utils.test_endpoint(
+                self, endpoint=f'account-indexes/{account_index}',
+                resource='ErrorObject',
+                response_code=404
+            )
+
+    # Test case: GET /activity-codes with activity code filter
+    def test_valid_get_activity_code_query(self):
+        for activity_code in self.test_cases['valid_activity_code_query']:
+            utils.test_endpoint(
+                self, endpoint='activity-codes',
+                resource='ActivityCodeResource',
+                response_code=200,
+                query_params={'activityCode': activity_code},
+                nullable_fields=[
+                    'terminationDate'
+                ]
+            )
+
+    def test_invalid_get_activity_code_query(self):
+        for activity_code in self.test_cases['invalid_activity_code_query']:
+            utils.test_endpoint(
+                self, endpoint='activity-codes',
+                resource='ErrorObject',
+                response_code=400,
+                query_params={'activityCode': activity_code}
+            )
+
+    # Test case: GET /activity-codes/{activityCode}
+    def test_valid_get_activity_code_path(self):
+        for activity_code in self.test_cases['valid_activity_code_path']:
+            utils.test_endpoint(
+                self, endpoint=f'activity-codes/{activity_code}',
+                resource='ActivityCodeResource',
+                response_code=200,
+                nullable_fields=[
+                    'terminationDate'
+                ]
+            )
+
+    def test_invalid_activity_code_path(self):
+        test_cases = self.test_cases['non_existing_activity_code_path']
+        for activity_code in test_cases:
+            utils.test_endpoint(
+                self, endpoint=f'activity-codes/{activity_code}',
+                resource='ErrorObject',
+                response_code=404
+            )
 
 
 if __name__ == '__main__':

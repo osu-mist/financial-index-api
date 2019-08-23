@@ -8,12 +8,12 @@ import { apiBaseUrl, resourcePathLink, paramsLink } from 'utils/uri-builder';
 const accountIndexProperties = openapi.definitions.AccountIndexResource.properties;
 const accountIndexResourceType = accountIndexProperties.type.enum[0];
 const accountIndexKeys = _.keys(accountIndexProperties.attributes.properties);
-const accountIndexEndpoint = resourcePathLink(apiBaseUrl, 'account-indexes');
+const accountIndexEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, 'account-indexes');
 
 const activityCodeProperties = openapi.definitions.ActivityCodeResource.properties;
 const activityCodeResourceType = activityCodeProperties.type.enum[0];
 const activityCodeKeys = _.keys(activityCodeProperties.attributes.properties);
-const activityCodesEndpoint = resourcePathLink(apiBaseUrl, 'activity-codes');
+const activityCodesEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, 'activity-codes');
 
 const accountIndexSerializerArgs = {
   identifierField: 'accountIndexCode',
@@ -35,9 +35,8 @@ const accountIndexesSerializer = (rows, query) => new JsonApiSerializer(
   serializerOptions({
     ...accountIndexSerializerArgs,
     ...{
-      topLevelSelfLink: {
-        self: paramsLink(accountIndexEndpoint, query),
-      },
+      topLevelSelfLink: paramsLink(accountIndexEndpoint, query),
+      query,
     },
   }),
 ).serialize(rows);
@@ -53,11 +52,7 @@ const accountIndexSerializer = row => new JsonApiSerializer(
   accountIndexResourceType,
   serializerOptions({
     ...accountIndexSerializerArgs,
-    ...{
-      topLevelSelfLink: {
-        self: resourcePathLink(accountIndexEndpoint, row.accountIndexCode),
-      },
-    },
+    ...{ topLevelSelfLink: resourcePathLink(accountIndexEndpoint, row.accountIndexCode) },
   }),
 ).serialize(row);
 
@@ -81,9 +76,7 @@ const activityCodesSerializer = (rows, query) => new JsonApiSerializer(
   serializerOptions({
     ...activityCodeSerializerArgs,
     ...{
-      topLevelSelfLink: {
-        self: paramsLink(activityCodesEndpoint, query),
-      },
+      topLevelSelfLink: paramsLink(activityCodesEndpoint, query),
       query,
     },
   }),
@@ -100,11 +93,7 @@ const activityCodeSerializer = row => new JsonApiSerializer(
   activityCodeResourceType,
   serializerOptions({
     ...activityCodeSerializerArgs,
-    ...{
-      topLevelSelfLink: {
-        self: resourcePathLink(activityCodesEndpoint, row.activityCode),
-      },
-    },
+    ...{ topLevelSelfLink: resourcePathLink(activityCodesEndpoint, row.activityCode) },
   }),
 ).serialize(row);
 
