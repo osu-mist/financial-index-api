@@ -43,25 +43,25 @@ paths:
           type: string
         - $ref: '#/parameters/authorization'
       responses:
-        200:
+        '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/AccountIndexesResultObject'
-        400:
+            $ref: '#/definitions/AccountIndexesResult'
+        '400':
           description: Bad Request
           schema:
-            $ref: '#/definitions/Errors'
-        500:
+            $ref: '#/definitions/ErrorResult'
+        '500':
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
   /finance/account-indexes/{accountIndexCode}:
     get:
       summary: Get a specific account index.
       tags:
         - indexes
       description: Get a specific account index code.
-      operationId: getAccountIndexByID
+      operationId: getAccountIndexById
       parameters:
         - name: accountIndexCode
           in: path
@@ -70,18 +70,18 @@ paths:
           type: string
         - $ref: '#/parameters/authorization'
       responses:
-        200:
+        '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/AccountIndexResultObject'
-        404:
+            $ref: '#/definitions/AccountIndexResult'
+        '404':
           description: Account index not found
           schema:
-            $ref: '#/definitions/Errors'
-        500:
+            $ref: '#/definitions/ErrorResult'
+        '500':
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
   /finance/activity-codes:
     get:
       summary: Get activity codes.
@@ -100,24 +100,24 @@ paths:
           required: true
         - $ref: '#/parameters/authorization'
       responses:
-        200:
+        '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/ActivityCodesResultObject'
-        400:
+            $ref: '#/definitions/ActivityCodesResult'
+        '400':
           description: Bad request
           schema:
-            $ref: '#/definitions/Errors'
-        500:
+            $ref: '#/definitions/ErrorResult'
+        '500':
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
   /finance/activity-codes/{activityCode}:
     get:
       summary: Get a specific activity code.
       tags:
         - activity-codes
-      operationId: getActivityCodeByID
+      operationId: getActivityCodeById
       parameters:
         - name: activityCode
           in: path
@@ -126,18 +126,18 @@ paths:
           required: true
         - $ref: '#/parameters/authorization'
       responses:
-        200:
+        '200':
           description: Successful response
           schema:
-            $ref: '#/definitions/ActivityCodeResultObject'
-        404:
+            $ref: '#/definitions/ActivityCodeResult'
+        '404':
           description: Activity code not found
           schema:
-            $ref: '#/definitions/Errors'
-        500:
+            $ref: '#/definitions/ErrorResult'
+        '500':
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/Errors'
+            $ref: '#/definitions/ErrorResult'
 parameters:
   authorization:
     name: Authorization
@@ -146,21 +146,27 @@ parameters:
     required: true
     description: '"Bearer [token]" where [token] is your OAuth2 access token'
 definitions:
-  AccountIndexesResultObject:
+  SelfLink:
+    properties:
+      self:
+        type: string
+        format: url
+        description: Self-link of current resource
+  AccountIndexesResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
         type: array
         items:
-          $ref: '#/definitions/AccountIndexResourceObject'
-  AccountIndexResultObject:
+          $ref: '#/definitions/AccountIndexResource'
+  AccountIndexResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
-        $ref: '#/definitions/AccountIndexResourceObject'
-  AccountIndexResourceObject:
+        $ref: '#/definitions/AccountIndexResource'
+  AccountIndexResource:
     properties:
       id:
         $ref: '#/definitions/AccountIndexCode'
@@ -180,14 +186,14 @@ definitions:
             description: >
               Date this account index record became effective.
               This date will never be in the future.
-            example: "2017-12-31"
+            example: 2017-12-31
           terminationDate:
             type: string
             format: date
             description: >
               Date this account index record will be terminated.
               This date will always either be in the future or null.
-            example: "2018-12-31"
+            example: 2018-12-31
           fundCode:
             type: string
             description: Fund code associated with this account index.
@@ -230,21 +236,21 @@ definitions:
     type: string
     description: Unique account index code.
     example: FOO123
-  ActivityCodesResultObject:
+  ActivityCodesResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
         type: array
         items:
-          $ref: '#/definitions/ActivityCodeResourceObject'
-  ActivityCodeResultObject:
+          $ref: '#/definitions/ActivityCodeResource'
+  ActivityCodeResult:
     properties:
       links:
         $ref: '#/definitions/SelfLink'
       data:
-        $ref: '#/definitions/ActivityCodeResourceObject'
-  ActivityCodeResourceObject:
+        $ref: '#/definitions/ActivityCodeResource'
+  ActivityCodeResource:
     properties:
       id:
         $ref: '#/definitions/ActivityCode'
@@ -264,32 +270,26 @@ definitions:
             description: >
               Date this activity code record became effective.
               This date will never be in the future.
-            example: "2017-12-31"
+            example: 2017-12-31
           terminationDate:
             type: string
             format: date
             description: >
               Date this activity code record will be terminated.
               This date will always either be in the future or null.
-            example: "2018-12-31"
+            example: 2018-12-31
       links:
         $ref: '#/definitions/SelfLink'
   ActivityCode:
     type: string
     description: Unique activity code.
     example: ABCD
-  SelfLink:
-    properties:
-      self:
-        type: string
-        format: url
-        description: Self link of ApiResource
-  Error:
+  ErrorObject:
     properties:
       status:
         type: string
         description: HTTP status code
-        example: 123
+        example: '123'
       title:
         type: string
         description: A short, user readable summary of the error
@@ -297,7 +297,7 @@ definitions:
       code:
         type: string
         description: An application-specific error code
-        example: 1234
+        example: '1234'
       detail:
         type: string
         description: A long description of the error that may contain instance-specific details
@@ -308,9 +308,9 @@ definitions:
             format: url
             description: A link to further information about the error
             example: https://developer.oregonstate.edu/documentation/error-reference#1234
-  Errors:
+  ErrorResult:
     properties:
       errors:
         type: array
         items:
-          $ref: '#/definitions/Error'
+          $ref: '#/definitions/ErrorObject'
