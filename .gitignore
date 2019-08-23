@@ -66,12 +66,6 @@ bin
 *.keystore
 *.truststore
 
-<<<<<<< HEAD
-# Integration Testing
-/tests/integration/configuration.json
-
-__pycache__/
-=======
 # Mac OS X
 .DS_Store
 
@@ -94,4 +88,3 @@ venv.bak/
 
 # Transpiled Babel code and source maps
 dist/**
->>>>>>> skeleton/master
