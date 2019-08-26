@@ -48,7 +48,7 @@ const accountIndexesSerializer = (rows, query) => new JsonApiSerializer(
  * @param {string} endpointUri Endpoint URI for creating self link
  * @returns {Object} Serialized accountIndex object
  */
-const accountIndexSerializer = row => new JsonApiSerializer(
+const accountIndexSerializer = (row) => new JsonApiSerializer(
   accountIndexResourceType,
   serializerOptions({
     ...accountIndexSerializerArgs,
@@ -89,7 +89,7 @@ const activityCodesSerializer = (rows, query) => new JsonApiSerializer(
  * @param {string} endpointUri Endpoint URI for creating self link
  * @returns {Object} Serialized activityCode object
  */
-const activityCodeSerializer = row => new JsonApiSerializer(
+const activityCodeSerializer = (row) => new JsonApiSerializer(
   activityCodeResourceType,
   serializerOptions({
     ...activityCodeSerializerArgs,
