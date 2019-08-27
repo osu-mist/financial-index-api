@@ -1,12 +1,6 @@
-<<<<<<< HEAD
-# Financial Index API ![version](https://img.shields.io/badge/version-v1-blue.svg) [![swagger](https://img.shields.io/badge/swagger-2.0-green.svg)](./swagger.yaml)
-
-API to validate financial account index codes, which are used for purchasing. API definition is contained in the [Swagger specification](./swagger.yaml).
-=======
-# Express API Skeleton ![version](https://img.shields.io/badge/version-v1-blue.svg) [![openapi](https://img.shields.io/badge/openapi-2.0-green.svg)](./openapi.yaml) ![node](https://img.shields.io/badge/node-10.13-brightgreen.svg) ![npm](https://img.shields.io/badge/npm-6.11.1-orange.svg)
+# Financial Index API ![version](https://img.shields.io/badge/version-v1-blue.svg) [![openapi](https://img.shields.io/badge/openapi-2.0-green.svg)](./openapi.yaml) ![node](https://img.shields.io/badge/node-10.13-brightgreen.svg) ![npm](https://img.shields.io/badge/npm-6.11.1-orange.svg)
 
 Skeleton for Express APIs. API definition is contained in the [OpenAPI specification](./openapi.yaml).
->>>>>>> skeleton/master
 
 ## Getting Started
 
