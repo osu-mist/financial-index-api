@@ -1,3 +1,4 @@
+"""Integration tests"""
 import json
 import logging
 import unittest
@@ -8,9 +9,13 @@ from prance import ResolvingParser
 import utils
 
 
-class integration_tests(unittest.TestCase):
+class IntegrationTests(utils.UtilsTestCase):
+    """Integration tests class"""
+
     @classmethod
     def setup(cls, config_path, openapi_path):
+        """Performs basic setup"""
+
         with open(config_path) as config_file:
             config = json.load(config_file)
             cls.base_url = utils.setup_base_url(config)
@@ -31,14 +36,14 @@ class integration_tests(unittest.TestCase):
         cls.openapi = parser.specification
 
     @classmethod
-    def cleanup(cls):
+    def tearDownClass(cls):
         cls.session.close()
 
     # Test case: GET /account-indexes with account index filter
     def test_valid_get_account_index_query(self):
         for account_index in self.test_cases['valid_account_index_query']:
-            utils.test_endpoint(
-                self, endpoint='account-indexes',
+            self.check_endpoint(
+                endpoint='account-indexes',
                 resource='AccountIndexResource',
                 response_code=200,
                 query_params={'accountIndexCode': account_index},
@@ -56,8 +61,8 @@ class integration_tests(unittest.TestCase):
     # Test case: GET /account-indexes with organization filter
     def test_valid_get_account_org_query(self):
         for account_org in self.test_cases['valid_account_org_query']:
-            utils.test_endpoint(
-                self, endpoint='account-indexes',
+            self.check_endpoint(
+                endpoint='account-indexes',
                 resource='AccountIndexResource',
                 response_code=200,
                 query_params={'organizationCode': account_org},
@@ -81,8 +86,8 @@ class integration_tests(unittest.TestCase):
         }
         for key, test_case in params.items():
             for value in self.test_cases[test_case]:
-                utils.test_endpoint(
-                    self, endpoint='account-indexes',
+                self.check_endpoint(
+                    endpoint='account-indexes',
                     resource='ErrorObject',
                     response_code=400,
                     query_params={key: value}
@@ -91,8 +96,8 @@ class integration_tests(unittest.TestCase):
     # Test case: GET /account-indexes/{accountIndexCode}
     def test_valid_get_account_index_path(self):
         for account_index in self.test_cases['valid_account_index_path']:
-            utils.test_endpoint(
-                self, endpoint=f'account-indexes/{account_index}',
+            self.check_endpoint(
+                endpoint=f'account-indexes/{account_index}',
                 resource='AccountIndexResource',
                 response_code=200,
                 nullable_fields=[
@@ -108,8 +113,8 @@ class integration_tests(unittest.TestCase):
 
     def test_invalid_get_account_index_path(self):
         for account_index in self.test_cases['invalid_account_index_path']:
-            utils.test_endpoint(
-                self, endpoint=f'account-indexes/{account_index}',
+            self.check_endpoint(
+                endpoint=f'account-indexes/{account_index}',
                 resource='ErrorObject',
                 response_code=404
             )
@@ -117,8 +122,8 @@ class integration_tests(unittest.TestCase):
     # Test case: GET /activity-codes with activity code filter
     def test_valid_get_activity_code_query(self):
         for activity_code in self.test_cases['valid_activity_code_query']:
-            utils.test_endpoint(
-                self, endpoint='activity-codes',
+            self.check_endpoint(
+                endpoint='activity-codes',
                 resource='ActivityCodeResource',
                 response_code=200,
                 query_params={'activityCode': activity_code},
@@ -129,8 +134,8 @@ class integration_tests(unittest.TestCase):
 
     def test_invalid_get_activity_code_query(self):
         for activity_code in self.test_cases['invalid_activity_code_query']:
-            utils.test_endpoint(
-                self, endpoint='activity-codes',
+            self.check_endpoint(
+                endpoint='activity-codes',
                 resource='ErrorObject',
                 response_code=400,
                 query_params={'activityCode': activity_code}
@@ -139,8 +144,8 @@ class integration_tests(unittest.TestCase):
     # Test case: GET /activity-codes/{activityCode}
     def test_valid_get_activity_code_path(self):
         for activity_code in self.test_cases['valid_activity_code_path']:
-            utils.test_endpoint(
-                self, endpoint=f'activity-codes/{activity_code}',
+            self.check_endpoint(
+                endpoint=f'activity-codes/{activity_code}',
                 resource='ActivityCodeResource',
                 response_code=200,
                 nullable_fields=[
@@ -151,8 +156,8 @@ class integration_tests(unittest.TestCase):
     def test_invalid_activity_code_path(self):
         test_cases = self.test_cases['non_existing_activity_code_path']
         for activity_code in test_cases:
-            utils.test_endpoint(
-                self, endpoint=f'activity-codes/{activity_code}',
+            self.check_endpoint(
+                endpoint=f'activity-codes/{activity_code}',
                 resource='ErrorObject',
                 response_code=404
             )
@@ -167,6 +172,5 @@ if __name__ == '__main__':
     else:
         logging.basicConfig(level=logging.INFO)
 
-    integration_tests.setup(arguments.config_path, arguments.openapi_path)
+    IntegrationTests.setup(arguments.config_path, arguments.openapi_path)
     unittest.main(argv=argv)
-    integration_tests.cleanup()
