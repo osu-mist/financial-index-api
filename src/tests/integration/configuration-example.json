@@ -16,11 +16,16 @@
     }
   },
   "test_cases": {
-    "valid_pet_ids": [
-      "57e1aab0-c50b-11e9-a7bd-1fb8646e6a06",
-      "757f4d20-c50b-11e9-a7bd-1fb8646e6a06",
-      "79b8ff30-c50b-11e9-a7bd-1fb8646e6a06"
-     ],
-    "invalid_pet_ids": ["999", "-1", "invalid_id"]
+      "valid_account_index_query": ["AGR", "for", "ENG091", "eng261", "PhilKnight"],
+      "invalid_account_index_query": [""],
+      "invalid_account_org_query": [""],
+      "valid_account_org_query": ["110015", "154230", "160000", "160600", "999999", "UHDS"],
+      "valid_account_index_path": ["ENG091", "ENG261", "ENG251", "ENG201"],
+      "invalid_account_index_path": ["AGR", "ENG", "ECE", "MTH", "eng261", "Eng091", "110015", "119003"],
+      "non_existing_account_index_path": ["110015", "119003", "379458", "740054"],
+      "valid_activity_code_query": ["TPOT", "efal", "T0", "ThisIsNotAnExistingActivtyCode"],
+      "invalid_activity_code_query": [""],
+      "valid_activity_code_path": ["TPOT", "EFAL"],
+      "non_existing_activity_code_path": ["T0", "hello", "ThisIsNotAnExistingActivtyCode", "tpot", "efal"]
   }
 }
