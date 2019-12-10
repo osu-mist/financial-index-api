@@ -41,7 +41,6 @@ paths:
           required: false
           description: Get account indexes that match this organization code.
           type: string
-        - $ref: '#/parameters/authorization'
       responses:
         '200':
           description: Successful response
@@ -68,7 +67,6 @@ paths:
           description: Account index code
           required: true
           type: string
-        - $ref: '#/parameters/authorization'
       responses:
         '200':
           description: Successful response
@@ -98,7 +96,6 @@ paths:
             ABC and AYZ.
           type: string
           required: true
-        - $ref: '#/parameters/authorization'
       responses:
         '200':
           description: Successful response
@@ -124,7 +121,6 @@ paths:
           description: Activity code.
           type: string
           required: true
-        - $ref: '#/parameters/authorization'
       responses:
         '200':
           description: Successful response
