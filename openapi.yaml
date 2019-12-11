@@ -19,6 +19,11 @@ externalDocs:
   url: https://github.com/osu-mist/financial-index-api
 produces:
   - application/json
+consumes:
+  - application/json
+security:
+  - OAuth2:
+      - full
 paths:
   /finance/account-indexes:
     get:
