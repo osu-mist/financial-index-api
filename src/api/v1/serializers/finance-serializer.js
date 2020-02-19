@@ -8,12 +8,12 @@ import { apiBaseUrl, resourcePathLink, paramsLink } from 'utils/uri-builder';
 const accountIndexProperties = openapi.definitions.AccountIndexResource.properties;
 const accountIndexResourceType = accountIndexProperties.type.enum[0];
 const accountIndexKeys = _.keys(accountIndexProperties.attributes.properties);
-const accountIndexEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, 'account-indexes');
+const accountIndexEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, accountIndexResourceType);
 
 const activityCodeProperties = openapi.definitions.ActivityCodeResource.properties;
 const activityCodeResourceType = activityCodeProperties.type.enum[0];
 const activityCodeKeys = _.keys(activityCodeProperties.attributes.properties);
-const activityCodesEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, 'activity-codes');
+const activityCodesEndpoint = resourcePathLink(`${apiBaseUrl}/finance`, activityCodeResourceType);
 
 const accountIndexSerializerArgs = {
   identifierField: 'accountIndexCode',
@@ -21,6 +21,7 @@ const accountIndexSerializerArgs = {
   resourceUrl: accountIndexEndpoint,
   enableDataLinks: true,
   resourceType: accountIndexResourceType,
+  resourcePath: accountIndexResourceType,
 };
 
 /**
@@ -62,6 +63,7 @@ const activityCodeSerializerArgs = {
   resourceUrl: activityCodesEndpoint,
   enableDataLinks: true,
   resourceType: activityCodeResourceType,
+  resourcePath: activityCodeResourceType,
 };
 
 /**

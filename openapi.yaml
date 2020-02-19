@@ -264,7 +264,7 @@ definitions:
         $ref: '#/definitions/ActivityCode'
       type:
         type: string
-        enum: [account-indexes]
+        enum: [activity-codes]
       attributes:
         properties:
           activityCode:
