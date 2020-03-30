@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
   title: Financial Index API
-  description: API to validate financial account indexes used for purchasing.
+  description: Get account indexes used for purchasing.
   version: v1
   license:
     name: GNU Affero General Public License Version 3
