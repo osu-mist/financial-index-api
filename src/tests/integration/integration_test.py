@@ -59,23 +59,23 @@ class IntegrationTests(utils.UtilsTestCase):
             )
 
     # Test case: GET /account-indexes with organization filter
-    def test_valid_get_account_org_query(self):
-        for account_org in self.test_cases['valid_account_org_query']:
-            self.check_endpoint(
-                endpoint='account-indexes',
-                resource='AccountIndexResource',
-                response_code=200,
-                query_params={'organizationCode': account_org},
-                nullable_fields=[
-                    'terminationDate',
-                    'accountCode',
-                    'accountTitle',
-                    'activityCode',
-                    'activityTitle',
-                    'locationCode',
-                    'locationTitle'
-                ]
-            )
+    # def test_valid_get_account_org_query(self):
+    #     for account_org in self.test_cases['valid_account_org_query']:
+    #         self.check_endpoint(
+    #             endpoint='account-indexes',
+    #             resource='AccountIndexResource',
+    #             response_code=200,
+    #             query_params={'organizationCode': account_org},
+    #             nullable_fields=[
+    #                 'terminationDate',
+    #                 'accountCode',
+    #                 'accountTitle',
+    #                 'activityCode',
+    #                 'activityTitle',
+    #                 'locationCode',
+    #                 'locationTitle'
+    #             ]
+    #         )
 
     # Test bad request /account-indexes with account index filter
     # and /account-indexes with organization filter
@@ -120,17 +120,17 @@ class IntegrationTests(utils.UtilsTestCase):
             )
 
     # Test case: GET /activity-codes with activity code filter
-    def test_valid_get_activity_code_query(self):
-        for activity_code in self.test_cases['valid_activity_code_query']:
-            self.check_endpoint(
-                endpoint='activity-codes',
-                resource='ActivityCodeResource',
-                response_code=200,
-                query_params={'activityCode': activity_code},
-                nullable_fields=[
-                    'terminationDate'
-                ]
-            )
+    # def test_valid_get_activity_code_query(self):
+    #     for activity_code in self.test_cases['valid_activity_code_query']:
+    #         self.check_endpoint(
+    #             endpoint='activity-codes',
+    #             resource='ActivityCodeResource',
+    #             response_code=200,
+    #             query_params={'activityCode': activity_code},
+    #             nullable_fields=[
+    #                 'terminationDate'
+    #             ]
+    #         )
 
     def test_invalid_get_activity_code_query(self):
         for activity_code in self.test_cases['invalid_activity_code_query']:
