@@ -40,23 +40,23 @@ class IntegrationTests(utils.UtilsTestCase):
         cls.session.close()
 
     # Test case: GET /account-indexes with account index filter
-    def test_valid_get_account_index_query(self):
-        for account_index in self.test_cases['valid_account_index_query']:
-            self.check_endpoint(
-                endpoint='account-indexes',
-                resource='AccountIndexResource',
-                response_code=200,
-                query_params={'accountIndexCode': account_index},
-                nullable_fields=[
-                    'terminationDate',
-                    'accountCode',
-                    'accountTitle',
-                    'activityCode',
-                    'activityTitle',
-                    'locationCode',
-                    'locationTitle'
-                ]
-            )
+    # def test_valid_get_account_index_query(self):
+    #     for account_index in self.test_cases['valid_account_index_query']:
+    #         self.check_endpoint(
+    #             endpoint='account-indexes',
+    #             resource='AccountIndexResource',
+    #             response_code=200,
+    #             query_params={'accountIndexCode': account_index},
+    #             nullable_fields=[
+    #                 'terminationDate',
+    #                 'accountCode',
+    #                 'accountTitle',
+    #                 'activityCode',
+    #                 'activityTitle',
+    #                 'locationCode',
+    #                 'locationTitle'
+    #             ]
+    #         )
 
     # Test case: GET /account-indexes with organization filter
     # def test_valid_get_account_org_query(self):
